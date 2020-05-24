@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.github.raffaeleragni.apilab</groupId>
+    <groupId>com.github.apilab-framework</groupId>
     <artifactId>apilab</artifactId>
     <version>2.0-SNAPSHOT</version>
   </parent>
@@ -11,7 +11,6 @@
   <properties>
     <version.swagger-core>2.1.1</version.swagger-core>
     <version.swagger-ui>3.24.3</version.swagger-ui>
-    <version.apilab>${project.version}</version.apilab>
     <!-- -->
     <version.jetty>9.4.25.v20191220</version.jetty>
     <version.alpn-api>1.1.3.v20160715</version.alpn-api>
@@ -19,9 +18,9 @@
   </properties>
   <dependencies>
     <dependency>
-      <groupId>com.github.raffaeleragni.apilab</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>apilab-core</artifactId>
-      <version>${version.apilab}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>io.javalin</groupId>
@@ -78,9 +77,9 @@
       <version>3.10.3</version>
     </dependency>
     <dependency>
-        <groupId>commons-codec</groupId>
-        <artifactId>commons-codec</artifactId>
-        <version>1.9</version>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.9</version>
     </dependency>
     <!-- swagger support -->
     <dependency>
