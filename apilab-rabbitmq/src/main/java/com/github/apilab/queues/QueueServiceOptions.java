@@ -24,7 +24,7 @@ import org.immutables.value.Value.Default;
  */
 @Value.Immutable
 public interface QueueServiceOptions {
-  @Default default boolean durable() {return true; };
-  @Default default boolean exclusive() {return false; };
-  @Default default boolean autoDelete() {return false; };
+  @Default default boolean durable() {return true; }
+  @Default default boolean exclusive() {return false; }
+  @Default default boolean autoDelete() {return false; }
 }

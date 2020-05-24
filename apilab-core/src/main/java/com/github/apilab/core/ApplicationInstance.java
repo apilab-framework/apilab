@@ -28,6 +28,7 @@ public class ApplicationInstance {
 
   @Inject
   public ApplicationInstance() {
+    ///
   }
 
   public void start() {

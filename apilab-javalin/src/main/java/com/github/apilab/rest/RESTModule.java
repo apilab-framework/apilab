@@ -40,6 +40,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import java.util.Map;
 import java.util.Optional;
+import static java.util.Optional.ofNullable;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -126,7 +127,7 @@ public class RESTModule {
     // can send them for throubleshooting and finding the requests logs via uuid.
     javalin.before(ctx -> MDC.put(MDC_REQUEST_UUID, UUID.randomUUID().toString()));
     javalin.after(ctx -> {
-      String uuid = MDC.get(MDC_REQUEST_UUID);
+      String uuid = ofNullable(MDC.get(MDC_REQUEST_UUID)).orElse("");
       ctx.header(HEADER_REQUEST_UUID, uuid);
       MDC.remove(MDC_REQUEST_UUID);
     });
