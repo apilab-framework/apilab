@@ -15,12 +15,12 @@
  */
 package com.github.apilab.rest.testmodules;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.apilab.core.Env;
 import com.github.apilab.rest.Endpoint;
 import com.github.apilab.rest.GetEndpointSample;
 import com.github.apilab.rest.ImmutableRESTInitializer;
 import com.github.apilab.rest.RESTInitializer;
+import com.google.gson.Gson;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
 import dagger.multibindings.IntoSet;
@@ -44,8 +44,8 @@ public class ComponentsModule {
 
   @Provides
   @Singleton
-  public ObjectMapper objectMapper() {
-    return new ObjectMapper();
+  public Gson gson() {
+    return new Gson();
   }
 
   @Provides

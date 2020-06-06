@@ -16,7 +16,6 @@
 package com.github.apilab.rest;
 
 import com.auth0.jwt.algorithms.Algorithm;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.apilab.core.ApplicationService;
 import com.github.apilab.core.Env;
 import static com.github.apilab.core.Env.Vars.API_ENABLE_ENDPOINTS;
@@ -25,19 +24,22 @@ import com.github.apilab.exceptions.ApplicationException;
 import com.github.apilab.rest.auth.ImmutableConfiguration;
 import com.github.apilab.rest.auth.JavalinJWTAccessManager;
 import com.github.apilab.rest.auth.JavalinJWTFilter;
+import com.google.gson.Gson;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
 import dagger.multibindings.IntoSet;
 import dagger.multibindings.StringKey;
 import io.javalin.Javalin;
-import io.javalin.plugin.json.JavalinJackson;
+import io.javalin.plugin.json.JavalinJson;
 import io.javalin.plugin.openapi.InitialConfigurationCreator;
 import io.javalin.plugin.openapi.OpenApiOptions;
 import io.javalin.plugin.openapi.OpenApiPlugin;
 import io.javalin.plugin.openapi.ui.SwaggerOptions;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import static java.util.Optional.ofNullable;
@@ -82,17 +84,18 @@ public class RESTModule {
   public Javalin javalin(
       Env env,
       RESTInitializer initializer,
-      ObjectMapper objectMapper,
+      Gson gson,
       Set<Endpoint> endpoints,
       @Named("healthChecks") Map<String, Supplier<Boolean>> healthChecks) {
 
-    JavalinJackson.configure(objectMapper);
+    JavalinJson.setFromJsonMapper(gson::fromJson);
+    JavalinJson.setToJsonMapper(gson::toJson);
 
     var javalin = Javalin.create(config -> {
       config.showJavalinBanner = false;
       config.server(() -> JettyHttp2Creator.createHttp2Server(env));
       config.accessManager(new JavalinJWTAccessManager());
-      config.registerPlugin(new OpenApiPlugin(getOpenApiOptions(objectMapper)));
+      config.registerPlugin(new OpenApiPlugin(getOpenApiOptions(gson)));
       config.registerPlugin(new JavalinJWTFilter(ImmutableConfiguration.builder()
         .roleMapper(initializer.roleMapper())
         .jwtSecret(Algorithm.HMAC256(
@@ -109,6 +112,15 @@ public class RESTModule {
     });
 
     javalin.get("/", c -> c.redirect("/swagger"));
+
+    // javalin securityscheme type is taken from enum instead of name, making it uppercase.
+    // need to convert it to down case or swagger ui will not work with autentication.
+    // (HTTP -> http)
+    javalin.after("/swagger-docs", c -> {
+      String response = c.resultString();
+      response = response.replaceAll("\"BearerAuth\":\\{\"type\":\"HTTP\"", "\"BearerAuth\":{\"type\":\"http\"");
+      c.result(response);
+    });
 
     boolean enabledEndpoints = Optional.ofNullable(env.get(API_ENABLE_ENDPOINTS))
         .map(Boolean::valueOf)
@@ -136,17 +148,21 @@ public class RESTModule {
 
   // API Docs
 
-  public OpenApiOptions getOpenApiOptions(ObjectMapper mapper) {
+  public OpenApiOptions getOpenApiOptions(Gson gson) {
 
     SecurityScheme securityScheme = new SecurityScheme();
     securityScheme.setType(SecurityScheme.Type.HTTP);
     securityScheme.setScheme("bearer");
     securityScheme.setBearerFormat("JWT");
 
-    InitialConfigurationCreator initialConfigurationCreator = () -> new OpenAPI().info(new Info().version("1.0").description("API").title("API")).schemaRequirement("BearerAuth", securityScheme);
+    var security = new SecurityRequirement();
+    security.addList("BearerAuth");
+    List<SecurityRequirement> securities = List.of(security);
+
+    InitialConfigurationCreator initialConfigurationCreator = () -> new OpenAPI().info(new Info().version("1.0").description("API").title("API")).schemaRequirement("BearerAuth", securityScheme).security(securities);
 
     return new OpenApiOptions(initialConfigurationCreator)
-      .jacksonMapper(mapper)
+      .toJsonMapper(gson::toJson)
       .path("/swagger-docs")
       .ignorePath("/")
       .ignorePath("/status/*")

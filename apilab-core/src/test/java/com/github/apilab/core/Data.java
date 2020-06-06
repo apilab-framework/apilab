@@ -13,36 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilab.executors;
+package com.github.apilab.core;
 
-import com.github.apilab.core.Env;
-import com.google.gson.Gson;
-import dagger.Provides;
-import dagger.multibindings.IntoSet;
-import javax.inject.Singleton;
+import java.time.Instant;
+import static java.time.Instant.now;
+import org.immutables.gson.Gson;
+import org.immutables.value.Value;
 
 /**
  *
  * @author Raffaele Ragni
  */
-@dagger.Module
-public class ComponentsModule {
-
-  @Provides
-  @IntoSet
-  public Scheduled queueServices(ScheduledSample sample) {
-    return sample;
-  }
-
-  @Provides
-  @Singleton
-  public Gson gson() {
-    return new Gson();
-  }
-
-  @Provides
-  @Singleton
-  public Env env() {
-    return new Env();
-  }
+@Value.Immutable
+@Gson.TypeAdapters
+public interface Data {
+  int a();
+  String b();
+  EnumSample e();
+  @Value.Default default Instant i() { return now(); }
 }

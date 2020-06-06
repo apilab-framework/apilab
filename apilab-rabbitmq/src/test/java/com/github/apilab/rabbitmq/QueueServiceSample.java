@@ -15,8 +15,8 @@
  */
 package com.github.apilab.rabbitmq;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.apilab.queues.QueueService;
+import com.google.gson.Gson;
 import com.rabbitmq.client.ConnectionFactory;
 import javax.inject.Inject;
 
@@ -27,8 +27,8 @@ import javax.inject.Inject;
 public class QueueServiceSample extends QueueService<String> {
 
   @Inject
-  public QueueServiceSample(ConnectionFactory factory, ObjectMapper mapper) {
-    super(factory, mapper, "queuename", String.class);
+  public QueueServiceSample(ConnectionFactory factory, Gson gson) {
+    super(factory, gson, "queuename", String.class);
   }
 
   @Override

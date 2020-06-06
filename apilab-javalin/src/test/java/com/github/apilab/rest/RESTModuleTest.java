@@ -46,7 +46,7 @@ public class RESTModuleTest {
 
     config.javalin(env,
       ImmutableRESTInitializer.builder().build(),
-      new ApplicationModule().objectMapper(),
+      new ApplicationModule().gson(),
       Set.of(new GetEndpointSample()),
       Map.of("test", (Supplier<Boolean>) () -> true));
 
@@ -54,7 +54,7 @@ public class RESTModuleTest {
 
     Javalin javalin = config.javalin(env,
       ImmutableRESTInitializer.builder().build(),
-      new ApplicationModule().objectMapper(),
+      new ApplicationModule().gson(),
       Set.of(new GetEndpointSample()),
       Map.of("test", (Supplier<Boolean>) () -> true));
 
