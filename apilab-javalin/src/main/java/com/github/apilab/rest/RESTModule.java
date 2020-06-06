@@ -98,10 +98,10 @@ public class RESTModule {
       config.registerPlugin(new OpenApiPlugin(getOpenApiOptions(gson)));
       config.registerPlugin(new JavalinJWTFilter(ImmutableConfiguration.builder()
         .roleMapper(initializer.roleMapper())
-        .jwtSecret(Algorithm.HMAC256(
-          Optional.ofNullable(
-            env.get(API_JWT_SECRET)).orElse("")
-        ))
+        .jwtSecret(
+          Optional.ofNullable(env.get(API_JWT_SECRET))
+            .map(Algorithm::HMAC256)
+        )
         .build()));
       config.registerPlugin(new HealthCheckPlugin(healthChecks));
     });
