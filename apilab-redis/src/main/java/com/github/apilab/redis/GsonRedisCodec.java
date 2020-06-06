@@ -15,25 +15,23 @@
  */
 package com.github.apilab.redis;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.apilab.exceptions.ApplicationException;
+import com.google.gson.Gson;
 import io.lettuce.core.codec.RedisCodec;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  *
  * @author Raffaele Ragni
+ * @param <T> type of the object in redis
  */
-public class JacksonRedisCodec<T> implements RedisCodec<String, T> {
+public class GsonRedisCodec<T> implements RedisCodec<String, T> {
 
-  private final ObjectMapper mapper;
+  private final Gson gson;
   private final Class<T> clazz;
 
-  public JacksonRedisCodec(Class<T> clazz, ObjectMapper mapper) {
-    this.mapper = mapper;
+  public GsonRedisCodec(Class<T> clazz, Gson gson) {
+    this.gson = gson;
     this.clazz = clazz;
   }
 
@@ -49,22 +47,12 @@ public class JacksonRedisCodec<T> implements RedisCodec<String, T> {
 
   @Override
   public T decodeValue(ByteBuffer bytes) {
-    try {
-      byte[] arr = new byte[bytes.remaining()];
-      bytes.get(arr);
-      return mapper.readValue(arr, clazz);
-    } catch (IOException ex) {
-      throw new ApplicationException(ex.getMessage(), ex);
-    }
+    return gson.fromJson(UTF_8.decode(bytes).toString(), clazz);
   }
 
   @Override
   public ByteBuffer encodeValue(T value) {
-    try {
-      return ByteBuffer.wrap(mapper.writeValueAsBytes(value));
-    } catch (JsonProcessingException ex) {
-      throw new ApplicationException(ex.getMessage(), ex);
-    }
+    return UTF_8.encode(gson.toJson(value));
   }
 
 }

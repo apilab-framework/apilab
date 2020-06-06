@@ -37,7 +37,6 @@ import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
 import liquibase.database.DatabaseFactory;
-import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.FileSystemResourceAccessor;
 import org.jdbi.v3.core.Jdbi;
@@ -98,12 +97,11 @@ public class JdbiModule {
   }
 
   public static void runMigrations(String migrationPath, String url, String username, String password) {
-    try {
-      new Liquibase(migrationPath, new ClassLoaderResourceAccessor(),
-        DatabaseFactory.getInstance().openDatabase(
-          url, username, password, null, new FileSystemResourceAccessor()))
-        .update(new Contexts(), new LabelExpression());
-    } catch (LiquibaseException ex) {
+    try (var liquibase = new Liquibase(migrationPath, new ClassLoaderResourceAccessor(),
+      DatabaseFactory.getInstance().openDatabase(
+        url, username, password, null, new FileSystemResourceAccessor()))) {
+      liquibase.update(new Contexts(), new LabelExpression());
+    } catch (Exception ex) {
       throw new ApplicationException(ex.getMessage(), ex);
     }
   }

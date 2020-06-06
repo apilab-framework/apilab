@@ -15,8 +15,8 @@
  */
 package com.github.apilab.queues;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.apilab.exceptions.ApplicationException;
+import com.google.gson.Gson;
 import com.rabbitmq.client.CancelCallback;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -44,7 +44,7 @@ public class QueueListenerTest {
   @Test
   public void testQueueing() throws IOException, TimeoutException {
 
-    var mapper = mock(ObjectMapper.class);
+    var gson = new Gson();
     var rabbitFactory = mock(ConnectionFactory.class);
     var rabbitConnection = mock(Connection.class);
     var rabbitChannel = mock(Channel.class);
@@ -54,9 +54,9 @@ public class QueueListenerTest {
     when(rabbitFactory.newConnection()).thenReturn(rabbitConnection);
     when(rabbitConnection.createChannel()).thenReturn(rabbitChannel);
 
-    var listenerExceptional = new MyListenerExceptional(rabbitFactory, mapper);
+    var listenerExceptional = new MyListenerExceptional(rabbitFactory, gson);
 
-    var listener = new MyListener(rabbitFactory, mapper);
+    var listener = new MyListener(rabbitFactory, gson);
 
     when(rabbitChannel.basicConsume(any(), anyBoolean(), any(DeliverCallback.class), any(CancelCallback.class)))
       .thenAnswer(invok -> {
@@ -113,8 +113,8 @@ public class QueueListenerTest {
 
   static class MyListener extends QueueService<String> {
 
-    public MyListener(ConnectionFactory rabbitFactory, ObjectMapper mapper) {
-      super(rabbitFactory, mapper, "my-queue-example-test", String.class, ImmutableQueueServiceOptions.builder().build());
+    public MyListener(ConnectionFactory rabbitFactory, Gson gson) {
+      super(rabbitFactory, gson, "my-queue-example-test", String.class, ImmutableQueueServiceOptions.builder().build());
     }
 
     @Override
@@ -125,8 +125,8 @@ public class QueueListenerTest {
 
   static class MyListenerExceptional extends QueueService<String> {
 
-    public MyListenerExceptional(ConnectionFactory rabbitFactory, ObjectMapper mapper) {
-      super(rabbitFactory, mapper, "my-exceptional-queue-example-test", String.class, ImmutableQueueServiceOptions.builder().build());
+    public MyListenerExceptional(ConnectionFactory rabbitFactory, Gson gson) {
+      super(rabbitFactory, gson, "my-exceptional-queue-example-test", String.class, ImmutableQueueServiceOptions.builder().build());
     }
 
     @Override

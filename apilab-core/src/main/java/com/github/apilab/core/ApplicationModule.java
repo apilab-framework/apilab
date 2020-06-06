@@ -15,15 +15,14 @@
  */
 package com.github.apilab.core;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import static com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fatboyindustrial.gsonjavatime.Converters;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapterFactory;
 import dagger.Provides;
+import java.util.ServiceLoader;
 import javax.inject.Singleton;
+import net.dongliu.gson.GsonJava8TypeAdapterFactory;
 
 /**
  *
@@ -31,21 +30,15 @@ import javax.inject.Singleton;
  */
 @dagger.Module
 public class ApplicationModule {
-  public @Provides @Singleton ObjectMapper objectMapper() {
-    // Providing a custom object mapper so it can handle special serialization needs
-    // General rules are: do not fail on a property that was not in the object
-    // and do not include properties that are null. This will keep a more dynamic
-    // compatibility for json.
-    ObjectMapper objectMapper = new ObjectMapper()
-      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    // Enum sensitivity is often a problem in java, so accept any case for enums ONLY.
-    objectMapper.configure(ACCEPT_CASE_INSENSITIVE_ENUMS, true);
-    // Support for new types
-    objectMapper.registerModule(new JavaTimeModule());
-    objectMapper.registerModule(new Jdk8Module());
-    // Dates are always in ISO timestamps
-    objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-    return objectMapper;
+
+  public @Provides @Singleton Gson gson() {
+    var builder = new GsonBuilder();
+    builder = Converters.registerAll(builder);
+    builder = builder.registerTypeAdapterFactory(new GsonJava8TypeAdapterFactory());
+    for (TypeAdapterFactory factory : ServiceLoader.load(TypeAdapterFactory.class)) {
+      builder.registerTypeAdapterFactory(factory);
+    }
+    return builder.create();
   }
+
 }

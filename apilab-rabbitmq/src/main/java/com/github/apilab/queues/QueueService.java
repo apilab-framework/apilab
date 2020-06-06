@@ -15,11 +15,12 @@
  */
 package com.github.apilab.queues;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.apilab.exceptions.ApplicationException;
+import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ConnectionFactory;
 import java.io.IOException;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,20 +41,20 @@ public abstract class QueueService<T> {
 
   ConnectionFactory rabbitFactory;
   Optional<Runnable> deregisterCallback;
-  ObjectMapper mapper;
+  Gson gson;
   String queueName;
   Class<T> clazz;
   QueueServiceOptions options;
 
   public QueueService(
     ConnectionFactory rabbitFactory,
-    ObjectMapper mapper,
+    Gson gson,
     String queueName,
     Class<T> clazz) {
 
     this(
       rabbitFactory,
-      mapper,
+      gson,
       queueName,
       clazz,
       ImmutableQueueServiceOptions.builder().build());
@@ -61,13 +62,13 @@ public abstract class QueueService<T> {
 
   public QueueService(
     ConnectionFactory rabbitFactory,
-    ObjectMapper mapper,
+    Gson gson,
     String queueName,
     Class<T> clazz,
     QueueServiceOptions options) {
 
     this.rabbitFactory = Objects.requireNonNull(rabbitFactory);
-    this.mapper = Objects.requireNonNull(mapper);
+    this.gson = Objects.requireNonNull(gson);
     this.queueName = Objects.requireNonNull(queueName);
     this.clazz = Objects.requireNonNull(clazz);
     this.options = options;
@@ -77,7 +78,7 @@ public abstract class QueueService<T> {
     withinChannel(rabbitFactory, ch -> {
       try {
         queueDeclare(ch);
-        ch.basicPublish("", queueName, null, mapper.writeValueAsBytes(message));
+        ch.basicPublish("", queueName, null, gson.toJson(message).getBytes(UTF_8));
         LOG.debug("Sent messsage: {}", message);
       } catch (IOException ex) {
         throw new ApplicationException(ex.getMessage(), ex);
@@ -98,7 +99,9 @@ public abstract class QueueService<T> {
       queueDeclare(channel);
       var tag = channel.basicConsume(queueName, false, (t, d) -> {
         try {
-          receive(mapper.readValue(d.getBody(), clazz));
+          var message = Optional.ofNullable(d.getBody())
+            .map(b -> new String(b, UTF_8)).orElse(null);
+          receive(gson.fromJson(message, clazz));
           channel.basicAck(d.getEnvelope().getDeliveryTag(), false);
         } catch (IOException | RuntimeException ex) {
           // Must swallow all exceptions or the queue consumer will die otherwise.

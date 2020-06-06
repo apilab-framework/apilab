@@ -15,19 +15,13 @@
  */
 package com.github.apilab.redis;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.apilab.exceptions.ApplicationException;
-import java.io.IOException;
-import java.nio.ByteBuffer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import java.util.Map;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
 
 /**
  *
@@ -37,8 +31,8 @@ public class JacksonRedisCodecTest {
 
   @Test
   public void testKey() {
-    var mapper = new ObjectMapper();
-    var codec = new JacksonRedisCodec<String>(String.class, mapper);
+    var gson = new Gson();
+    var codec = new GsonRedisCodec<String>(String.class, gson);
 
     var result = codec.decodeKey(codec.encodeKey("asd"));
 
@@ -47,33 +41,14 @@ public class JacksonRedisCodecTest {
 
   @Test
   public void testValue() {
-    var mapper = new ObjectMapper();
-    var codec = new JacksonRedisCodec<Map>(Map.class, mapper);
+    var gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+    var codec = new GsonRedisCodec<Map>(Map.class, gson);
 
     var map = Map.of("k1", "v1", "k2", "v21");
 
     var result = codec.decodeValue(codec.encodeValue(map));
 
     assertThat("round trip encoding", result, is(map));
-  }
-
-  @Test
-  public void testValueErrors() throws IOException {
-    var mapper = mock(ObjectMapper.class);
-    var codec = new JacksonRedisCodec<Map>(Map.class, mapper);
-
-    var map = Map.of("k1", "v1", "k2", "v21");
-
-    doThrow(IOException.class).when(mapper).readValue(any(byte[].class), any(Class.class));
-    assertThrows(ApplicationException.class, () -> {
-      codec.decodeValue(ByteBuffer.wrap(new byte[]{}));
-    });
-
-    doThrow(JsonProcessingException.class).when(mapper).writeValueAsBytes(any(Map.class));
-    assertThrows(ApplicationException.class, () -> {
-      codec.encodeValue(map);
-    });
-
   }
 
 }
