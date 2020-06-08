@@ -17,7 +17,6 @@ package com.github.apilab.rest;
 
 import com.github.apilab.core.ApplicationService;
 import com.github.apilab.core.Env;
-import static com.github.apilab.core.Env.Vars.API_QUIT_AFTER_MIGRATION;
 import io.javalin.Javalin;
 import java.util.Optional;
 import javax.inject.Inject;
@@ -38,7 +37,7 @@ public class RESTService implements ApplicationService {
 
   @Override
   public void start() {
-    if (ignore()) {
+    if (!enabled()) {
       return;
     }
     javalin.start();
@@ -47,15 +46,15 @@ public class RESTService implements ApplicationService {
 
   @Override
   public void stop() {
-    if (ignore()) {
+    if (!enabled()) {
       return;
     }
     javalin.stop();
     JettyHttp2Creator.stopMetrics();
   }
 
-  private boolean ignore() {
-    return Optional.ofNullable(env.get(API_QUIT_AFTER_MIGRATION))
+  private boolean enabled() {
+    return Optional.ofNullable(env.get(() -> "API_ENABLE_ENDPOINTS"))
        .map(Boolean::valueOf)
        .orElse(false);
   }

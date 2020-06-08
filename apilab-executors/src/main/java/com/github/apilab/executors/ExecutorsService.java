@@ -17,8 +17,6 @@ package com.github.apilab.executors;
 
 import com.github.apilab.core.ApplicationService;
 import com.github.apilab.core.Env;
-import static com.github.apilab.core.Env.Vars.API_ENABLE_SCHEDULED;
-import static com.github.apilab.core.Env.Vars.API_QUIT_AFTER_MIGRATION;
 import java.util.Optional;
 import javax.inject.Inject;
 
@@ -38,28 +36,22 @@ public class ExecutorsService implements ApplicationService {
 
   @Override
   public void start() {
-    if (!ignore() && enableExecutors()) {
+    if (enableExecutors()) {
       applicationScheduler.start();
     }
   }
 
   @Override
   public void stop() {
-    if (!ignore() && enableExecutors()) {
+    if (enableExecutors()) {
       applicationScheduler.stop();
     }
   }
 
   public boolean enableExecutors() {
-    return Optional.ofNullable(env.get(API_ENABLE_SCHEDULED))
+    return Optional.ofNullable(env.get(() -> "API_ENABLE_SCHEDULED"))
       .map(Boolean::valueOf)
       .orElse(false);
-  }
-
-  private boolean ignore() {
-    return Optional.ofNullable(env.get(API_QUIT_AFTER_MIGRATION))
-       .map(Boolean::valueOf)
-       .orElse(false);
   }
 
 }

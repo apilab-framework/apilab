@@ -18,6 +18,7 @@ package com.github.apilab.rest;
 import com.github.apilab.core.ApplicationModule;
 import com.github.apilab.core.Env;
 import com.github.apilab.exceptions.UnprocessableEntityException;
+import com.github.apilab.rest.testmodules.DaggerApplicationComponent;
 import io.javalin.Javalin;
 import java.io.IOException;
 import java.util.Map;
@@ -26,6 +27,8 @@ import java.util.function.Supplier;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
@@ -39,10 +42,17 @@ import static org.mockito.Mockito.when;
 public class RESTModuleTest {
 
   @Test
+  public void testInjectedLifecycle() {
+    var services = DaggerApplicationComponent.create().services();
+
+    assertThat("Service is loaded", services, hasItem(isA(RESTService.class)));
+  }
+
+  @Test
   public void testJavalin() throws IOException {
     var config = new RESTModule();
-    var env = mock(Env.class);
-    when(env.get(Env.Vars.API_ENABLE_ENDPOINTS)).thenReturn("false");
+    var env = new Env();
+    System.setProperty("API_ENABLE_ENDPOINTS", "false");
 
     config.javalin(env,
       ImmutableRESTInitializer.builder().build(),
@@ -50,7 +60,7 @@ public class RESTModuleTest {
       Set.of(new GetEndpointSample()),
       Map.of("test", (Supplier<Boolean>) () -> true));
 
-    when(env.get(Env.Vars.API_ENABLE_ENDPOINTS)).thenReturn("true");
+    System.setProperty("API_ENABLE_ENDPOINTS", "true");
 
     Javalin javalin = config.javalin(env,
       ImmutableRESTInitializer.builder().build(),
@@ -62,23 +72,26 @@ public class RESTModuleTest {
 
     javalin.start();
 
-    OkHttpClient client = new OkHttpClient();
+    try {
+      OkHttpClient client = new OkHttpClient();
 
+      Request request = new Request.Builder()
+        .url("http://localhost:8080/swagger-docs")
+        .build();
+      Response response = client.newCall(request).execute();
 
-    Request request = new Request.Builder()
-      .url("http://localhost:8080/swagger-doc")
-      .build();
-    client.newCall(request).execute();
+      assertThat("Response code is 200", response.code(), is(200));
 
+      request = new Request.Builder()
+        .url("http://localhost:8080/testbad")
+        .build();
+      response = client.newCall(request).execute();
 
-    request = new Request.Builder()
-      .url("http://localhost:8080/testbad")
-      .build();
-    Response response = client.newCall(request).execute();
-
-    javalin.stop();
-
-    assertThat("Response code is 422", response.code(), is(422));
+      assertThat("Response code is 422", response.code(), is(422));
+    }
+    finally {
+      javalin.stop();
+    }
   }
 
   @Test

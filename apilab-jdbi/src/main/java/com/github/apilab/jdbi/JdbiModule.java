@@ -16,11 +16,6 @@
 package com.github.apilab.jdbi;
 
 import com.github.apilab.core.Env;
-import static com.github.apilab.core.Env.Vars.API_DATABASE_MAXPOOLSZE;
-import static com.github.apilab.core.Env.Vars.API_DATABASE_PASSWORD;
-import static com.github.apilab.core.Env.Vars.API_DATABASE_URL;
-import static com.github.apilab.core.Env.Vars.API_DATABASE_USERNAME;
-import static com.github.apilab.core.Env.Vars.API_ENABLE_MIGRATION;
 import com.github.apilab.exceptions.ApplicationException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -66,12 +61,12 @@ public class JdbiModule {
   @Provides
   @Singleton
   public Jdbi jdbi(Env env, @Named("jdbiImmutables") Set<Class<?>> jdbiImmutables) {
-    var url = ofNullable(env.get(API_DATABASE_URL)).orElse("jdbc:postgresql://[::1]/postgres");
-    var username = ofNullable(env.get(API_DATABASE_USERNAME)).orElse("postgres");
-    var password = ofNullable(env.get(API_DATABASE_PASSWORD)).orElse("postgres");
-    var maxConnections = ofNullable(env.get(API_DATABASE_MAXPOOLSZE)).map(Integer::valueOf).orElse(100);
+    var url = ofNullable(env.get(() -> "API_DATABASE_URL")).orElse("jdbc:postgresql://[::1]/postgres");
+    var username = ofNullable(env.get(() -> "API_DATABASE_USERNAME")).orElse("postgres");
+    var password = ofNullable(env.get(() -> "API_DATABASE_PASSWORD")).orElse("postgres");
+    var maxConnections = ofNullable(env.get(() -> "API_DATABASE_MAXPOOLSZE")).map(Integer::valueOf).orElse(100);
 
-    boolean enableMigrations = Optional.ofNullable(env.get(API_ENABLE_MIGRATION))
+    boolean enableMigrations = Optional.ofNullable(env.get(() -> "API_ENABLE_MIGRATION"))
        .map(Boolean::valueOf)
        .orElse(false);
     if (enableMigrations) {

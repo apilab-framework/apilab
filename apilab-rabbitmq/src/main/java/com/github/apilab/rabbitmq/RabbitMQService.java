@@ -17,8 +17,6 @@ package com.github.apilab.rabbitmq;
 
 import com.github.apilab.core.ApplicationService;
 import com.github.apilab.core.Env;
-import static com.github.apilab.core.Env.Vars.API_ENABLE_CONSUMERS;
-import static com.github.apilab.core.Env.Vars.API_QUIT_AFTER_MIGRATION;
 import com.github.apilab.queues.QueueService;
 import com.rabbitmq.client.ConnectionFactory;
 import java.util.Optional;
@@ -46,7 +44,7 @@ public class RabbitMQService implements ApplicationService {
 
   @Override
   public void start() {
-    if (!ignore() && enabledConsumers()) {
+    if (enabledConsumers()) {
       LOG.info("## CONSUMERS ENABLED");
       queueServices.stream().forEach(l -> {
         LOG.info("## CONSUMERS Registering {}", l.getClass().getName());
@@ -57,21 +55,15 @@ public class RabbitMQService implements ApplicationService {
 
   @Override
   public void stop() {
-    if (!ignore() && enabledConsumers()) {
+    if (enabledConsumers()) {
       queueServices.stream().forEach(QueueService::unregisterQueueListener);
     }
   }
 
   private boolean enabledConsumers() {
-    return Optional.ofNullable(env.get(API_ENABLE_CONSUMERS))
+    return Optional.ofNullable(env.get(() -> "API_ENABLE_CONSUMERS"))
       .map(Boolean::valueOf)
       .orElse(false);
-  }
-
-  private boolean ignore() {
-    return Optional.ofNullable(env.get(API_QUIT_AFTER_MIGRATION))
-       .map(Boolean::valueOf)
-       .orElse(false);
   }
 
 }

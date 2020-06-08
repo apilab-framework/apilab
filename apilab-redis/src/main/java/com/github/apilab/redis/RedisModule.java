@@ -16,7 +16,6 @@
 package com.github.apilab.redis;
 
 import com.github.apilab.core.Env;
-import static com.github.apilab.core.Env.Vars.API_REDIS_URL;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
 import dagger.multibindings.StringKey;
@@ -49,7 +48,7 @@ public class RedisModule {
   @Provides
   @Singleton
   public RedisClient redisClient(Env env) {
-    var url = ofNullable(env.get(API_REDIS_URL)).orElse("redis://localhost");
+    var url = ofNullable(env.get(() -> "API_REDIS_URL")).orElse("redis://localhost");
     return RedisClient.create(url);
   }
 

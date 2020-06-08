@@ -16,6 +16,8 @@
 package com.github.apilab.rabbitmq;
 
 import com.github.apilab.core.ApplicationInstance;
+import com.github.apilab.core.ApplicationService;
+import java.util.Set;
 import javax.inject.Singleton;
 
 /**
@@ -26,4 +28,5 @@ import javax.inject.Singleton;
 @Singleton
 public interface ApplicationComponent {
   ApplicationInstance instance();
+  Set<ApplicationService> services();
 }

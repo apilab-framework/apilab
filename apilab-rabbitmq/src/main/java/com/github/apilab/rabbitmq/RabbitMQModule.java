@@ -17,10 +17,6 @@ package com.github.apilab.rabbitmq;
 
 import com.github.apilab.core.ApplicationService;
 import com.github.apilab.core.Env;
-import static com.github.apilab.core.Env.Vars.API_RABBITMQ_HOST;
-import static com.github.apilab.core.Env.Vars.API_RABBITMQ_PASSWORD;
-import static com.github.apilab.core.Env.Vars.API_RABBITMQ_PORT;
-import static com.github.apilab.core.Env.Vars.API_RABBITMQ_USERNAME;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
 import dagger.multibindings.IntoSet;
@@ -63,10 +59,10 @@ public class RabbitMQModule {
 
     var factory = new com.rabbitmq.client.ConnectionFactory();
     // "guest"/"guest" by default, limited to localhost connections
-    factory.setUsername(ofNullable(env.get(API_RABBITMQ_USERNAME)).orElse("guest"));
-    factory.setPassword(ofNullable(env.get(API_RABBITMQ_PASSWORD)).orElse("guest"));
-    factory.setHost(ofNullable(env.get(API_RABBITMQ_HOST)).orElse("localhost"));
-    factory.setPort(ofNullable(env.get(API_RABBITMQ_PORT)).map(Integer::parseInt).orElse(5672));
+    factory.setUsername(ofNullable(env.get(() -> "API_RABBITMQ_USERNAME")).orElse("guest"));
+    factory.setPassword(ofNullable(env.get(() -> "API_RABBITMQ_PASSWORD")).orElse("guest"));
+    factory.setHost(ofNullable(env.get(() -> "API_RABBITMQ_HOST")).orElse("localhost"));
+    factory.setPort(ofNullable(env.get(() -> "API_RABBITMQ_PORT")).map(Integer::parseInt).orElse(5672));
 
     return factory;
   }

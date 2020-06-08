@@ -16,11 +16,6 @@
 package com.github.apilab.rest;
 
 import com.github.apilab.core.Env;
-import static com.github.apilab.core.Env.Vars.JAVALIN_HTTP2_PORT;
-import static com.github.apilab.core.Env.Vars.JAVALIN_HTTPS2_CERT_CLASSPATH;
-import static com.github.apilab.core.Env.Vars.JAVALIN_HTTPS2_CERT_PASSWORD;
-import static com.github.apilab.core.Env.Vars.JAVALIN_HTTPS2_PORT;
-import static com.github.apilab.core.Env.Vars.JAVALIN_PROMETHEUS_PORT;
 import com.github.apilab.exceptions.ApplicationException;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exporter.HTTPServer;
@@ -146,30 +141,30 @@ public class JettyHttp2Creator {
   }
 
   private static int getPrometheusPort(Env env) {
-    return ofNullable(env.get(JAVALIN_PROMETHEUS_PORT))
+    return ofNullable(env.get(() -> "JAVALIN_PROMETHEUS_PORT"))
               .map(Integer::valueOf)
               .orElse(7080);
   }
 
   private static int getHttp2Port(Env env) {
-    return ofNullable(env.get(JAVALIN_HTTP2_PORT))
+    return ofNullable(env.get(() -> "JAVALIN_HTTP2_PORT"))
               .map(Integer::valueOf)
               .orElse(8080);
   }
 
   private static int getHttps2Port(Env env) {
-    return ofNullable(env.get(JAVALIN_HTTPS2_PORT))
+    return ofNullable(env.get(() -> "JAVALIN_HTTPS2_PORT"))
       .map(Integer::valueOf)
       .orElse(8443);
   }
 
   private static String getHttps2CertClasspath(Env env) {
-    return ofNullable(env.get(JAVALIN_HTTPS2_CERT_CLASSPATH))
+    return ofNullable(env.get(() -> "JAVALIN_HTTPS2_CERT_CLASSPATH"))
       .orElse("/keystore.jks");
   }
 
   private static String getHttps2CertPassword(Env env) {
-    return ofNullable(env.get(JAVALIN_HTTPS2_CERT_PASSWORD))
+    return ofNullable(env.get(() -> "JAVALIN_HTTPS2_CERT_PASSWORD"))
       .orElse("password");
   }
 }

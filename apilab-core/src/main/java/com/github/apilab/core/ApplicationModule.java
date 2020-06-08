@@ -25,16 +25,24 @@ import javax.inject.Singleton;
 import net.dongliu.gson.GsonJava8TypeAdapterFactory;
 
 /**
+ * Provides basic components shared among all the other modules.
+ * - GSON: a Json serialization setup to handle java8 dates, types, and handling the immutable types.
  *
  * @author Raffaele Ragni
  */
 @dagger.Module
 public class ApplicationModule {
 
-  public @Provides @Singleton Gson gson() {
+  @Provides
+  @Singleton
+  public Gson gson() {
     var builder = new GsonBuilder();
+    // This adds the converters for java dates and times
     builder = Converters.registerAll(builder);
+    // This add converters for other java types, ex enums and maps
     builder = builder.registerTypeAdapterFactory(new GsonJava8TypeAdapterFactory());
+    // This will add all the generated type adapters automatically.
+    // The ones generated from value.immutable classes with annotation @Gson.TypeAdapters
     for (TypeAdapterFactory factory : ServiceLoader.load(TypeAdapterFactory.class)) {
       builder.registerTypeAdapterFactory(factory);
     }

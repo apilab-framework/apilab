@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilab.rest.testmodules;
+package com.github.apilab.executors;
 
-import static com.github.apilab.core.Env.Vars.API_QUIT_AFTER_MIGRATION;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.isA;
+import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.jupiter.api.Test;
 
 /**
  *
  * @author Raffaele Ragni
  */
-public class ApplicationTest {
+public class ExecutorsModuleTest {
   @Test
-  public void testComponent() {
-    var instance = DaggerApplicationComponent.create().instance();
-    instance.start();
-    instance.stop();
+  public void testInjectedLifecycle() {
+    var services = DaggerApplicationComponent.create().services();
 
-    System.setProperty(API_QUIT_AFTER_MIGRATION.name(), "true");
-    instance.start();
-    instance.stop();
+    assertThat("Service is loaded", services, hasItem(isA(ExecutorsService.class)));
   }
 }

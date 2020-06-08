@@ -16,7 +16,9 @@
 package com.github.apilab.rest.testmodules;
 
 import com.github.apilab.core.ApplicationInstance;
+import com.github.apilab.core.ApplicationService;
 import com.github.apilab.rest.RESTModule;
+import java.util.Set;
 import javax.inject.Singleton;
 
 /**
@@ -27,4 +29,5 @@ import javax.inject.Singleton;
 @Singleton
 public interface ApplicationComponent {
   ApplicationInstance instance();
+  Set<ApplicationService> services();
 }

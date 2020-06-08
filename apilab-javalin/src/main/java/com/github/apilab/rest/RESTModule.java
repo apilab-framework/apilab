@@ -18,8 +18,6 @@ package com.github.apilab.rest;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.github.apilab.core.ApplicationService;
 import com.github.apilab.core.Env;
-import static com.github.apilab.core.Env.Vars.API_ENABLE_ENDPOINTS;
-import static com.github.apilab.core.Env.Vars.API_JWT_SECRET;
 import com.github.apilab.exceptions.ApplicationException;
 import com.github.apilab.rest.auth.ImmutableConfiguration;
 import com.github.apilab.rest.auth.JavalinJWTAccessManager;
@@ -99,7 +97,7 @@ public class RESTModule {
       config.registerPlugin(new JavalinJWTFilter(ImmutableConfiguration.builder()
         .roleMapper(initializer.roleMapper())
         .jwtSecret(
-          Optional.ofNullable(env.get(API_JWT_SECRET))
+          Optional.ofNullable(env.get(() -> "API_JWT_SECRET"))
             .map(Algorithm::HMAC256)
         )
         .build()));
@@ -122,9 +120,9 @@ public class RESTModule {
       c.result(response);
     });
 
-    boolean enabledEndpoints = Optional.ofNullable(env.get(API_ENABLE_ENDPOINTS))
+    boolean enabledEndpoints = Optional.ofNullable(env.get(() -> "API_ENABLE_ENDPOINTS"))
         .map(Boolean::valueOf)
-        .orElse(true);
+        .orElse(false);
 
     if (enabledEndpoints) {
       LOG.info("## ENDPOINTS ENABLED");

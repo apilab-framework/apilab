@@ -19,7 +19,9 @@ import java.util.Set;
 import javax.inject.Inject;
 
 /**
- *
+ * Manages startup and tear down of all the instances injected in the application life cycle.
+ * This is mainly used by the apilab modules to determine a start and stop context of the
+ * application.
  * @author Raffaele Ragni
  */
 public class ApplicationInstance {

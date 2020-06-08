@@ -16,7 +16,8 @@
 package com.github.apilab.core;
 
 /**
- * Starting and stopping module services.
+ * This interface is mostly transparent to the user.
+ * Modules will implement this interface in order to be notified of the life cycle of apilab.
  * @author Raffaele Ragni
  */
 public interface ApplicationService {

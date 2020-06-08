@@ -16,35 +16,16 @@
 package com.github.apilab.core;
 
 /**
- *
+ * Handles environment configuration read.
  * @author Raffaele Ragni
  */
 public class Env {
 
-  public enum Vars {
-    API_ENABLE_ENDPOINTS,
-    API_ENABLE_CONSUMERS,
-    API_ENABLE_SCHEDULED,
-    API_ENABLE_MIGRATION,
-    API_QUIT_AFTER_MIGRATION,
-    API_JWT_SECRET,
-    API_REDIS_URL,
-    API_DATABASE_URL,
-    API_DATABASE_USERNAME,
-    API_DATABASE_PASSWORD,
-    API_DATABASE_MAXPOOLSZE,
-    API_RABBITMQ_USERNAME,
-    API_RABBITMQ_PASSWORD,
-    API_RABBITMQ_HOST,
-    API_RABBITMQ_PORT,
-    JAVALIN_PROMETHEUS_PORT,
-    JAVALIN_HTTP2_PORT,
-    JAVALIN_HTTPS2_PORT,
-    JAVALIN_HTTPS2_CERT_CLASSPATH,
-    JAVALIN_HTTPS2_CERT_PASSWORD
+  public interface Var {
+    String name();
   }
 
-  public String get(Vars var) {
+  public String get(Var var) {
     var value = System.getProperty(var.name());
     if (value != null) {
       return value;

@@ -15,8 +15,6 @@
  */
 package com.github.apilab.core;
 
-import static com.github.apilab.core.Env.Vars.API_JWT_SECRET;
-import static com.github.apilab.core.Env.Vars.JAVALIN_HTTP2_PORT;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -29,9 +27,9 @@ import org.junit.jupiter.api.Test;
 public class EnvTest {
   @Test
   public void testEnv() {
-    System.setProperty(JAVALIN_HTTP2_PORT.name(), "9090");
+    System.setProperty("JAVALIN_HTTP2_PORT", "9090");
     var env = new Env();
-    assertThat("Env read from properties", env.get(JAVALIN_HTTP2_PORT), is("9090"));
-    assertThat("Env read from properties", env.get(API_JWT_SECRET), is(nullValue()));
+    assertThat("Env read from properties", env.get(() -> "JAVALIN_HTTP2_PORT"), is("9090"));
+    assertThat("Env read from properties", env.get(() -> "API_JWT_SECRET"), is(nullValue()));
   }
 }

@@ -16,19 +16,12 @@
 package com.github.apilab.jdbi;
 
 import com.github.apilab.core.Env;
-import static com.github.apilab.core.Env.Vars.API_DATABASE_MAXPOOLSZE;
-import static com.github.apilab.core.Env.Vars.API_DATABASE_PASSWORD;
-import static com.github.apilab.core.Env.Vars.API_DATABASE_URL;
-import static com.github.apilab.core.Env.Vars.API_DATABASE_USERNAME;
-import static com.github.apilab.core.Env.Vars.API_ENABLE_MIGRATION;
 import com.github.apilab.exceptions.ApplicationException;
 import static java.util.Collections.emptySet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  *
@@ -38,15 +31,15 @@ public class JdbiModuleTest {
 
   @Test
   public void testModule() {
-    var env = mock(Env.class);
-    when(env.get(API_DATABASE_URL)).thenReturn("jdbc:h2:mem:test");
-    when(env.get(API_DATABASE_USERNAME)).thenReturn("sa");
-    when(env.get(API_DATABASE_PASSWORD)).thenReturn("");
-    when(env.get(API_DATABASE_MAXPOOLSZE)).thenReturn("1");
-    when(env.get(API_ENABLE_MIGRATION)).thenReturn("false");
+    var env = new Env();
+    System.setProperty("API_DATABASE_URL", "jdbc:h2:mem:test");
+    System.setProperty("API_DATABASE_USERNAME", "sa");
+    System.setProperty("API_DATABASE_PASSWORD", "");
+    System.setProperty("API_DATABASE_MAXPOOLSZE", "1");
+    System.setProperty("API_ENABLE_MIGRATION", "false");
     new JdbiModule().jdbi(env, emptySet());
 
-    when(env.get(API_ENABLE_MIGRATION)).thenReturn("true");
+    System.setProperty("API_ENABLE_MIGRATION", "true");
     var jdbi = new JdbiModule().jdbi(env, emptySet());
 
     assertThrows(ApplicationException.class, () -> {

@@ -20,7 +20,9 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
@@ -31,6 +33,14 @@ import static org.mockito.Mockito.when;
  * @author Raffaele Ragni
  */
 public class RabbitMQModuleTest {
+
+  @Test
+  public void testInjectedLifecycle() {
+    var services = DaggerApplicationComponent.create().services();
+
+    assertThat("Service is loaded", services, hasItem(isA(RabbitMQService.class)));
+  }
+
   @Test
   public void testModule() throws IOException, TimeoutException {
     var env = new Env();

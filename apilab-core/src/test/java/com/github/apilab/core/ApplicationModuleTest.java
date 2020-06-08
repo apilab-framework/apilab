@@ -19,13 +19,11 @@ import static com.github.apilab.core.EnumSample.A;
 import static com.github.apilab.core.EnumSample.C;
 import java.io.IOException;
 import java.time.Instant;
-import static java.time.Instant.now;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 
 /**
  *
