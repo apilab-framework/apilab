@@ -15,6 +15,7 @@
  */
 package com.github.apilab.rest;
 
+import com.github.apilab.core.Env;
 import io.javalin.Javalin;
 import io.javalin.core.plugin.Plugin;
 import io.javalin.http.Context;
@@ -36,13 +37,9 @@ public class HealthCheckPlugin implements Plugin, Handler {
   private final String version;
   private final Map<String, Supplier<Boolean>> checkLambda;
 
-  public HealthCheckPlugin(Map<String, Supplier<Boolean>> checkLambda) {
+  public HealthCheckPlugin(Map<String, Supplier<Boolean>> checkLambda, Env env) {
     this.checkLambda = Objects.requireNonNull(checkLambda);
-    this.version = ofNullable(System.getProperty("appVersion"))
-      .orElseGet(()
-        -> ofNullable(System.getenv("APP_VERSION"))
-        .orElse("unknown")
-      );
+    this.version = ofNullable(env.get(() -> "APP_VERSION")).orElse("unknown");
   }
 
   @Override

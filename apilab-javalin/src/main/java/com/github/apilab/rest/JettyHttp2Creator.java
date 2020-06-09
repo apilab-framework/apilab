@@ -100,7 +100,8 @@ public class JettyHttp2Creator {
 
     server.setHandler(statisticsHandler);
 
-    ServerConnector connector = new ServerConnector(server);
+    // Javalin will take care of stopping the server
+    ServerConnector connector = new ServerConnector(server); //NOSONAR
     connector.setPort(getHttp2Port(env));
     server.addConnector(connector);
 
@@ -133,7 +134,8 @@ public class JettyHttp2Creator {
     SslConnectionFactory ssl = new SslConnectionFactory(sslContextFactory, alpn.getProtocol());
 
     // HTTP/2 Connector
-    ServerConnector http2Connector = new ServerConnector(server, ssl, alpn, h2, new HttpConnectionFactory(httpsConfig));
+    // Javalin will take care of stopping the server
+    ServerConnector http2Connector = new ServerConnector(server, ssl, alpn, h2, new HttpConnectionFactory(httpsConfig)); //NOSONAR
     http2Connector.setPort(getHttps2Port(env));
     server.addConnector(http2Connector);
 

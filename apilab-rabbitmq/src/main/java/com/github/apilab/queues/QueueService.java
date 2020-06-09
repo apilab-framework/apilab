@@ -94,7 +94,12 @@ public abstract class QueueService<T> {
    */
   public void registerQueueListener() {
     try {
-      var connection = rabbitFactory.newConnection();
+      // Reason for using NOSONAR: this is normally in a try with resources block.
+      // But in this case we must keep the connection open or the listening to the
+      // queue will stop (the event-based listening).
+      // There is a closing functional that will take care of freeing this resource
+      // following the application lifecycle using the ApplicationService interface.
+      var connection = rabbitFactory.newConnection(); //NOSONAR
       var channel = connection.createChannel();
       queueDeclare(channel);
       var tag = channel.basicConsume(queueName, false, (t, d) -> {

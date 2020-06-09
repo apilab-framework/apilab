@@ -101,7 +101,7 @@ public class RESTModule {
             .map(Algorithm::HMAC256)
         )
         .build()));
-      config.registerPlugin(new HealthCheckPlugin(healthChecks));
+      config.registerPlugin(new HealthCheckPlugin(healthChecks, env));
     });
 
     javalin.exception(ApplicationException.class, (ex, ctx) -> {

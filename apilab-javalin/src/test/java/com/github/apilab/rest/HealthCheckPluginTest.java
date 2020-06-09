@@ -15,6 +15,7 @@
  */
 package com.github.apilab.rest;
 
+import com.github.apilab.core.Env;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import java.util.Map;
@@ -35,8 +36,9 @@ public class HealthCheckPluginTest {
   public void testHealthCheck() throws Exception {
     var ctx = mock(Context.class);
     var app = mock(Javalin.class);
+    var env = new Env();
 
-    var plugin = new HealthCheckPlugin(Map.of("db", (Supplier<Boolean>) () -> true));
+    var plugin = new HealthCheckPlugin(Map.of("db", (Supplier<Boolean>) () -> true), env);
     plugin.apply(app);
 
     verify(app).get(eq("/status/version"), any());

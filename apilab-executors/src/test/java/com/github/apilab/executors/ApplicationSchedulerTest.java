@@ -15,8 +15,11 @@
  */
 package com.github.apilab.executors;
 
+import static java.util.Optional.empty;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -43,6 +46,8 @@ public class ApplicationSchedulerTest {
     TimeUnit.MILLISECONDS.sleep(100L);
 
     scheduler.stop();
+
+    assertThat("Shutdown was ok", scheduler.scheduler, is(empty()));
 
   }
 }
