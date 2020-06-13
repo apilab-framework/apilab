@@ -96,10 +96,7 @@ public class RESTModule {
       config.registerPlugin(new OpenApiPlugin(getOpenApiOptions(gson)));
       config.registerPlugin(new JavalinJWTFilter(ImmutableConfiguration.builder()
         .roleMapper(initializer.roleMapper())
-        .jwtSecret(
-          Optional.ofNullable(env.get(() -> "API_JWT_SECRET"))
-            .map(Algorithm::HMAC256)
-        )
+        .jwtSecret(createAlgorithmFromEnvironment(env))
         .build()));
       config.registerPlugin(new HealthCheckPlugin(healthChecks, env));
     });
@@ -165,5 +162,21 @@ public class RESTModule {
       .ignorePath("/")
       .ignorePath("/status/*")
       .swagger(new SwaggerOptions("/swagger").title("API"));
+  }
+
+  private Optional<Algorithm> createAlgorithmFromEnvironment(Env env) {
+    // Case 1: plain secret string, using hmac256, from variable API_JWT_SECRET
+    // Case 2: rsa pubkey for verify (no priv): the JWT auth plugin only does verification,
+    //         if there is a token creation class to be made, will be in the future elsewhere.
+    //         API_JWT_PUBLIC_KEY -> used for case 2
+    //         [API_JWT_PRIVATE_KEY] -> complementary var to be used in another class later.
+    // Which one takes precedence given all env variables set?
+    // RSA is more secure so that should come first.
+    // Functions have hard coded algs and bits so how to split them (strategy pattern?)
+    // Which is the default?
+
+    return Optional
+      .ofNullable(env.get(() -> "API_JWT_SECRET"))
+      .map(Algorithm::HMAC256);
   }
 }
