@@ -15,7 +15,6 @@
  */
 package com.github.apilab.queues;
 
-import com.github.apilab.exceptions.ApplicationException;
 import com.google.gson.Gson;
 import com.rabbitmq.client.CancelCallback;
 import com.rabbitmq.client.Channel;
@@ -83,27 +82,27 @@ public class QueueListenerTest {
 
     doThrow(IOException.class).when(rabbitChannel)
       .queueDeclare(any(), anyBoolean(), anyBoolean(), anyBoolean(), any());
-    assertThrows(ApplicationException.class, () ->{
+    assertThrows(RuntimeException.class, () ->{
       listener.send("message");
     });
 
     doThrow(IOException.class).when(rabbitConnection).createChannel();
-    assertThrows(ApplicationException.class, () ->{
+    assertThrows(RuntimeException.class, () ->{
       listener.send("message");
     });
 
     doThrow(IOException.class).when(rabbitFactory).newConnection();
-    assertThrows(ApplicationException.class, () ->{
+    assertThrows(RuntimeException.class, () ->{
       listener.send("message");
     });
 
-    assertThrows(ApplicationException.class, () ->{
+    assertThrows(RuntimeException.class, () ->{
       listener.registerQueueListener();
     });
-    assertThrows(ApplicationException.class, () ->{
+    assertThrows(RuntimeException.class, () ->{
       listener.send("message");
     });
-    assertThrows(ApplicationException.class, () ->{
+    assertThrows(RuntimeException.class, () ->{
       listenerExceptional.registerQueueListener();
     });
 

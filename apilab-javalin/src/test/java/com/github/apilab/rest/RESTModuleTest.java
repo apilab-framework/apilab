@@ -15,9 +15,9 @@
  */
 package com.github.apilab.rest;
 
-import com.github.apilab.core.ApplicationModule;
+import com.github.apilab.core.GSONModule;
 import com.github.apilab.core.Env;
-import com.github.apilab.exceptions.UnprocessableEntityException;
+import com.github.apilab.rest.exceptions.UnprocessableEntityException;
 import com.github.apilab.rest.testmodules.DaggerApplicationComponent;
 import io.javalin.Javalin;
 import java.io.IOException;
@@ -32,8 +32,6 @@ import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  *
@@ -56,7 +54,7 @@ public class RESTModuleTest {
 
     config.javalin(env,
       ImmutableRESTInitializer.builder().build(),
-      new ApplicationModule().gson(),
+      new GSONModule().gson(),
       Set.of(new GetEndpointSample()),
       Map.of("test", (Supplier<Boolean>) () -> true));
 
@@ -64,7 +62,7 @@ public class RESTModuleTest {
 
     Javalin javalin = config.javalin(env,
       ImmutableRESTInitializer.builder().build(),
-      new ApplicationModule().gson(),
+      new GSONModule().gson(),
       Set.of(new GetEndpointSample()),
       Map.of("test", (Supplier<Boolean>) () -> true));
 

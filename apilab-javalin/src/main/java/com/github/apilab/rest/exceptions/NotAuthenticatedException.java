@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilab.core;
+package com.github.apilab.rest.exceptions;
 
-import javax.inject.Singleton;
+public class NotAuthenticatedException extends ServerException {
 
-/**
- *
- * @author Raffaele Ragni
- */
-@dagger.Component(modules = {GSONModule.class, ComponentModule.class})
-@Singleton
-public interface ApplicationComponent {
-  ApplicationLifecycle instance();
+  public NotAuthenticatedException(String message) {
+    super(401, message);
+  }
+
 }

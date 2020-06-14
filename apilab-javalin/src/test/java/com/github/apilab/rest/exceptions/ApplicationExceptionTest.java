@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilab.exceptions;
+package com.github.apilab.rest.exceptions;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,7 +28,7 @@ public class ApplicationExceptionTest {
   @Test
   public void testExceptions() {
     var t = new RuntimeException();
-    var ex = new ApplicationException("message", t);
+    var ex = new ServerException("message", t);
     
     assertThat("message taken", ex.getMessage(), is("message"));
     assertThat("cause taken", ex.getCause(), is(t));

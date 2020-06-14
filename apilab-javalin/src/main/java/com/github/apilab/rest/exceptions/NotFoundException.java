@@ -13,29 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilab.exceptions;
+package com.github.apilab.rest.exceptions;
 
 /**
  * 
  * @author Raffaele Ragni
  */
-public class ApplicationException extends RuntimeException {
-
-  private final int httpCode;
-
-  public ApplicationException(int httpCode, String message) {
-    super(message);
-    this.httpCode = httpCode;
+public class NotFoundException extends ServerException {
+  
+  public NotFoundException(String message) {
+    super(404, message);
   }
-
-  public ApplicationException(String message, Throwable cause) {
-    super(message, cause);
-    this.httpCode = 500;
-  }
-
-  public int getHttpCode() {
-    return httpCode;
-  }
-
-
+  
 }

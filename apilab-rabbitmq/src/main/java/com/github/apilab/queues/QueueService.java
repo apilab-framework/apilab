@@ -15,7 +15,7 @@
  */
 package com.github.apilab.queues;
 
-import com.github.apilab.exceptions.ApplicationException;
+import com.github.apilab.queues.exceptions.QueueMessagingException;
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ConnectionFactory;
@@ -81,7 +81,7 @@ public abstract class QueueService<T> {
         ch.basicPublish("", queueName, null, gson.toJson(message).getBytes(UTF_8));
         LOG.debug("Sent messsage: {}", message);
       } catch (IOException ex) {
-        throw new ApplicationException(ex.getMessage(), ex);
+        throw new QueueMessagingException(ex.getMessage(), ex);
       }
     });
   }
@@ -126,7 +126,7 @@ public abstract class QueueService<T> {
         try { connection.close(); } catch (IOException ex) { LoggerFactory.getLogger(QueueService.class).warn(ex.getMessage(), ex); }
       });
     } catch (IOException | TimeoutException ex) {
-      throw new ApplicationException(ex.getMessage(), ex);
+      throw new QueueMessagingException(ex.getMessage(), ex);
     }
   }
 
@@ -156,7 +156,7 @@ public abstract class QueueService<T> {
         fn.accept(channel);
       }
     } catch (IOException | TimeoutException ex) {
-      throw new ApplicationException(ex.getMessage(), ex);
+      throw new QueueMessagingException(ex.getMessage(), ex);
     }
   }
 

@@ -15,10 +15,10 @@
  */
 package com.github.apilab.executors;
 
-import com.github.apilab.core.ApplicationInstance;
-import com.github.apilab.core.ApplicationService;
+import com.github.apilab.core.ApplicationLifecycle;
 import java.util.Set;
 import javax.inject.Singleton;
+import com.github.apilab.core.ApplicationLifecycleItem;
 
 /**
  *
@@ -27,6 +27,6 @@ import javax.inject.Singleton;
 @dagger.Component(modules = {ExecutorsModule.class, ComponentsModule.class})
 @Singleton
 public interface ApplicationComponent {
-  ApplicationInstance instance();
-  Set<ApplicationService> services();
+  ApplicationLifecycle instance();
+  Set<ApplicationLifecycleItem> services();
 }

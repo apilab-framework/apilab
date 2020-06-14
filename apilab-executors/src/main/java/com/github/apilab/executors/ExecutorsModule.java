@@ -15,10 +15,10 @@
  */
 package com.github.apilab.executors;
 
-import com.github.apilab.core.ApplicationService;
 import dagger.Provides;
 import dagger.multibindings.IntoSet;
 import javax.inject.Singleton;
+import com.github.apilab.core.ApplicationLifecycleItem;
 
 /**
  *
@@ -29,7 +29,7 @@ public class ExecutorsModule {
   @Provides
   @Singleton
   @IntoSet
-  public ApplicationService service(ExecutorsService service) {
+  public ApplicationLifecycleItem service(ExecutorsService service) {
     return service;
   }
 }

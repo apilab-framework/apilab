@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilab.exceptions;
+package com.github.apilab.core;
 
-public class NotAuthenticatedException extends ApplicationException {
-
-  public NotAuthenticatedException(String message) {
-    super(401, message);
-  }
-
+/**
+ * This interface is mostly transparent to the user.
+ * Modules will implement this interface in order to be notified of the life cycle of apilab.
+ * @author Raffaele Ragni
+ */
+public interface ApplicationLifecycleItem {
+  void start();
+  void stop();
 }

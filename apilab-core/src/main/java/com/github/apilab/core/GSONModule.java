@@ -31,7 +31,7 @@ import net.dongliu.gson.GsonJava8TypeAdapterFactory;
  * @author Raffaele Ragni
  */
 @dagger.Module
-public class ApplicationModule {
+public class GSONModule {
 
   @Provides
   @Singleton

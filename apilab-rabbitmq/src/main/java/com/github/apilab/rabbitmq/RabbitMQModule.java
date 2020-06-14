@@ -15,7 +15,6 @@
  */
 package com.github.apilab.rabbitmq;
 
-import com.github.apilab.core.ApplicationService;
 import com.github.apilab.core.Env;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
@@ -29,6 +28,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.github.apilab.core.ApplicationLifecycleItem;
 
 /**
  *
@@ -41,7 +41,7 @@ public class RabbitMQModule {
   @Provides
   @Singleton
   @IntoSet
-  public ApplicationService service(RabbitMQService service) {
+  public ApplicationLifecycleItem service(RabbitMQService service) {
     return service;
   }
 

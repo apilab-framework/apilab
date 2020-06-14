@@ -28,7 +28,7 @@ import javax.inject.Singleton;
 public class ComponentModule {
   @Provides
   @Singleton
-  public Set<ApplicationService> services() {
+  public Set<ApplicationLifecycleItem> services() {
     return emptySet();
   }
 }

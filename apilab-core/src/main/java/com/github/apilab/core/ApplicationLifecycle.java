@@ -13,45 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilab.executors;
+package com.github.apilab.core;
 
-import com.github.apilab.core.Env;
-import java.util.Optional;
+import java.util.Set;
 import javax.inject.Inject;
-import com.github.apilab.core.ApplicationLifecycleItem;
 
 /**
- *
+ * Manages startup and tear down of all the instances injected in the application life cycle.
+ * This is mainly used by the apilab modules to determine a start and stop context of the
+ * application.
  * @author Raffaele Ragni
  */
-public class ExecutorsService implements ApplicationLifecycleItem {
+public class ApplicationLifecycle {
 
-  @Inject Env env;
-  @Inject Executor applicationScheduler;
+  @Inject Set<ApplicationLifecycleItem> services;
 
   @Inject
-  public ExecutorsService() {
-    ////
+  public ApplicationLifecycle() {
+    ///
   }
 
-  @Override
   public void start() {
-    if (enableExecutors()) {
-      applicationScheduler.start();
-    }
+    services.forEach(ApplicationLifecycleItem::start);
   }
 
-  @Override
   public void stop() {
-    if (enableExecutors()) {
-      applicationScheduler.stop();
-    }
+    services.forEach(ApplicationLifecycleItem::stop);
   }
-
-  public boolean enableExecutors() {
-    return Optional.ofNullable(env.get(() -> "API_ENABLE_SCHEDULED"))
-      .map(Boolean::valueOf)
-      .orElse(false);
-  }
-
 }

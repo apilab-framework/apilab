@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Raffaele Ragni.
+ * Copyright 2019 Raffaele Ragni.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilab.exceptions;
+package com.github.apilab.rest.exceptions;
 
-public class UnprocessableEntityException extends ApplicationException {
+/**
+ * 
+ * @author Raffaele Ragni
+ */
+public class ServerException extends RuntimeException {
 
-  public UnprocessableEntityException(String message) {
-    super(422, message);
+  private final int httpCode;
+
+  public ServerException(int httpCode, String message) {
+    super(message);
+    this.httpCode = httpCode;
   }
+
+  public ServerException(String message, Throwable cause) {
+    super(message, cause);
+    this.httpCode = 500;
+  }
+
+  public int getHttpCode() {
+    return httpCode;
+  }
+
 
 }

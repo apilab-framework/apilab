@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Raffaele Ragni.
+ * Copyright 2020 Raffaele Ragni.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilab.exceptions;
+package com.github.apilab.rest.exceptions;
 
-/**
- * 
- * @author Raffaele Ragni
- */
-public class NotFoundException extends ApplicationException {
-  
-  public NotFoundException(String message) {
-    super(404, message);
+public class NotAuthorizedException extends ServerException {
+
+  public NotAuthorizedException(String message) {
+    super(403, message);
   }
-  
+
 }

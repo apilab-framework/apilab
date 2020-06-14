@@ -16,7 +16,6 @@
 package com.github.apilab.jdbi;
 
 import com.github.apilab.core.Env;
-import com.github.apilab.exceptions.ApplicationException;
 import static java.util.Collections.emptySet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -42,7 +41,7 @@ public class JdbiModuleTest {
     System.setProperty("API_ENABLE_MIGRATION", "true");
     var jdbi = new JdbiModule().jdbi(env, emptySet());
 
-    assertThrows(ApplicationException.class, () -> {
+    assertThrows(RuntimeException.class, () -> {
       JdbiModule.runMigrations(
         "wrong path does not exist!",
         "jdbc:h2:mem:test2", "sa", "");

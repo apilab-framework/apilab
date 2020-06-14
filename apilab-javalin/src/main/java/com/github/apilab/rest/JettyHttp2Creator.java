@@ -16,7 +16,7 @@
 package com.github.apilab.rest;
 
 import com.github.apilab.core.Env;
-import com.github.apilab.exceptions.ApplicationException;
+import com.github.apilab.rest.exceptions.ServerException;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exporter.HTTPServer;
 import io.prometheus.client.hotspot.DefaultExports;
@@ -55,7 +55,7 @@ public class JettyHttp2Creator {
     if (metricServer != null) {
       metricServer.stop();
     }
-    try { metricServer = new HTTPServer(getPrometheusPort(env)); } catch (IOException ex) { throw new ApplicationException(ex.getMessage(), ex); }
+    try { metricServer = new HTTPServer(getPrometheusPort(env)); } catch (IOException ex) { throw new ServerException(ex.getMessage(), ex); }
   }
 
   /**

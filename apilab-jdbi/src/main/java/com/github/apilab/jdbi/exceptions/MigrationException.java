@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilab.exceptions;
+package com.github.apilab.jdbi.exceptions;
 
-public class NotAuthorizedException extends ApplicationException {
+/**
+ *
+ * @author Raffaele Ragni
+ */
+public class MigrationException extends RuntimeException {
 
-  public NotAuthorizedException(String message) {
-    super(403, message);
+  public MigrationException(String message, Throwable cause) {
+    super(message, cause);
   }
 
 }

@@ -15,7 +15,6 @@
  */
 package com.github.apilab.rabbitmq;
 
-import com.github.apilab.core.ApplicationService;
 import com.github.apilab.core.Env;
 import com.github.apilab.queues.QueueService;
 import com.rabbitmq.client.ConnectionFactory;
@@ -24,12 +23,13 @@ import java.util.Set;
 import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.github.apilab.core.ApplicationLifecycleItem;
 
 /**
  *
  * @author Raffaele Ragni
  */
-public class RabbitMQService implements ApplicationService {
+public class RabbitMQService implements ApplicationLifecycleItem {
 
   private static final Logger LOG = LoggerFactory.getLogger(RabbitMQService.class);
 

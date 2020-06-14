@@ -15,17 +15,17 @@
  */
 package com.github.apilab.rest;
 
-import com.github.apilab.core.ApplicationService;
 import com.github.apilab.core.Env;
 import io.javalin.Javalin;
 import java.util.Optional;
 import javax.inject.Inject;
+import com.github.apilab.core.ApplicationLifecycleItem;
 
 /**
  *
  * @author Raffaele Ragni
  */
-public class RESTService implements ApplicationService {
+public class RESTService implements ApplicationLifecycleItem {
 
   @Inject
   public RESTService() {

@@ -32,7 +32,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 public class ApplicationModuleTest {
   @Test
   public void testModule() throws IOException, JSONException {
-    var gson = new ApplicationModule().gson();
+    var gson = new GSONModule().gson();
 
     // Basic serialization sanity check
 

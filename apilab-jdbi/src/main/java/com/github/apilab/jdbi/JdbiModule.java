@@ -16,7 +16,7 @@
 package com.github.apilab.jdbi;
 
 import com.github.apilab.core.Env;
-import com.github.apilab.exceptions.ApplicationException;
+import com.github.apilab.jdbi.exceptions.MigrationException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import dagger.Provides;
@@ -97,7 +97,7 @@ public class JdbiModule {
         url, username, password, null, new FileSystemResourceAccessor()))) {
       liquibase.update(new Contexts(), new LabelExpression());
     } catch (Exception ex) {
-      throw new ApplicationException(ex.getMessage(), ex);
+      throw new MigrationException(ex.getMessage(), ex);
     }
   }
 }

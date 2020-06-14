@@ -16,12 +16,11 @@
 package com.github.apilab.rest;
 
 import com.auth0.jwt.algorithms.Algorithm;
-import com.github.apilab.core.ApplicationService;
 import com.github.apilab.core.Env;
-import com.github.apilab.exceptions.ApplicationException;
 import com.github.apilab.rest.auth.ImmutableConfiguration;
 import com.github.apilab.rest.auth.JavalinJWTAccessManager;
 import com.github.apilab.rest.auth.JavalinJWTFilter;
+import com.github.apilab.rest.exceptions.ServerException;
 import com.google.gson.Gson;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
@@ -49,6 +48,7 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import com.github.apilab.core.ApplicationLifecycleItem;
 
 /**
  *
@@ -63,7 +63,7 @@ public class RESTModule {
 
   private static final Logger LOG = LoggerFactory.getLogger(RESTModule.class);
 
-  @Provides @IntoSet ApplicationService service(RESTService service) {
+  @Provides @IntoSet ApplicationLifecycleItem service(RESTService service) {
     return service;
   }
 
@@ -101,7 +101,7 @@ public class RESTModule {
       config.registerPlugin(new HealthCheckPlugin(healthChecks, env));
     });
 
-    javalin.exception(ApplicationException.class, (ex, ctx) -> {
+    javalin.exception(ServerException.class, (ex, ctx) -> {
       ctx.status(ex.getHttpCode());
       ctx.json(ex.getMessage());
     });

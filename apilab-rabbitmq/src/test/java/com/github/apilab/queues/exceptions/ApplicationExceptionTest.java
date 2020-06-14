@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Raffaele Ragni.
+ * Copyright 2019 Raffaele Ragni.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilab.core;
+package com.github.apilab.queues.exceptions;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import org.junit.jupiter.api.Test;
 
 /**
- * This interface is mostly transparent to the user.
- * Modules will implement this interface in order to be notified of the life cycle of apilab.
+ *
  * @author Raffaele Ragni
  */
-public interface ApplicationService {
-  void start();
-  void stop();
+public class ApplicationExceptionTest {
+
+  @Test
+  public void testExceptions() {
+    var t = new RuntimeException();
+    var ex = new QueueMessagingException("message", t);
+
+    assertThat("message taken", ex.getMessage(), is("message"));
+    assertThat("cause taken", ex.getCause(), is(t));
+  }
+
 }

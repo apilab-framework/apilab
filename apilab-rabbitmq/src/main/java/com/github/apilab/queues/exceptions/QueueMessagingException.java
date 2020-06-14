@@ -13,31 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilab.core;
-
-import java.util.Set;
-import javax.inject.Inject;
+package com.github.apilab.queues.exceptions;
 
 /**
- * Manages startup and tear down of all the instances injected in the application life cycle.
- * This is mainly used by the apilab modules to determine a start and stop context of the
- * application.
+ *
  * @author Raffaele Ragni
  */
-public class ApplicationInstance {
+public class QueueMessagingException extends RuntimeException {
 
-  @Inject Set<ApplicationService> services;
-
-  @Inject
-  public ApplicationInstance() {
-    ///
+  public QueueMessagingException(String message, Throwable cause) {
+    super(message, cause);
   }
 
-  public void start() {
-    services.forEach(ApplicationService::start);
-  }
-
-  public void stop() {
-    services.forEach(ApplicationService::stop);
-  }
 }
