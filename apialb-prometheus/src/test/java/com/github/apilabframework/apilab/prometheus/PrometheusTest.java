@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Raffaele Ragni.
+ * Copyright 2019 Raffaele Ragni.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilab.executors;
+package com.github.apilabframework.apilab.prometheus;
 
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.isA;
+import com.github.apilab.core.Env;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsNull.nullValue;
 import org.junit.jupiter.api.Test;
 
 /**
  *
  * @author Raffaele Ragni
  */
-public class ExecutorsModuleTest {
-  @Test
-  public void testInjectedLifecycle() {
-    var services = DaggerApplicationComponent.create().services();
+public class PrometheusTest {
 
-    assertThat("Service is loaded", services, hasItem(isA(ApplicationExecutorLifecycle.class)));
+  @Test
+  public void testMetrics() {
+
+    var lifecycle = new PrometheusLifecycle();
+    lifecycle.env = new Env();
+
+    lifecycle.stop();
+    lifecycle.start();
+    lifecycle.stop();
+
+    assertThat("metrics server is in the end stopped", lifecycle.metricServer, is(nullValue()));
+
+    lifecycle.start();
+    lifecycle.start();
+    lifecycle.stop();
+
+    assertThat("metrics server is in the end stopped", lifecycle.metricServer, is(nullValue()));
   }
 }

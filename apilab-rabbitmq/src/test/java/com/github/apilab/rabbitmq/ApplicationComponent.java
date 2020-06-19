@@ -24,7 +24,7 @@ import com.github.apilab.core.ApplicationLifecycleItem;
  *
  * @author Raffaele Ragni
  */
-@dagger.Component(modules = {RabbitMQModule.class, ComponentsModule.class})
+@dagger.Component(modules = {QueueModule.class, ComponentsModule.class})
 @Singleton
 public interface ApplicationComponent {
   ApplicationLifecycle instance();

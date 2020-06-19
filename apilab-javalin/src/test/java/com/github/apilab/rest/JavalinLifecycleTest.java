@@ -26,13 +26,13 @@ import static org.mockito.Mockito.verify;
  *
  * @author Raffaele Ragni
  */
-public class RESTServiceTest {
+public class JavalinLifecycleTest {
 
-  RESTService service;
+  JavalinLifecycle service;
 
   // BeforeEach just doesn't work, have no time to deal with people's libraries while maintaining my own.
   public void startup() {
-    service = new RESTService();
+    service = new JavalinLifecycle();
     service.javalin = mock(Javalin.class);
     service.env = new Env();
   }

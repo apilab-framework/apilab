@@ -16,12 +16,9 @@
 package com.github.apilab.rest;
 
 import com.github.apilab.core.Env;
-import com.github.apilab.rest.exceptions.ServerException;
 import io.prometheus.client.CollectorRegistry;
-import io.prometheus.client.exporter.HTTPServer;
 import io.prometheus.client.hotspot.DefaultExports;
 import io.prometheus.client.jetty.JettyStatisticsCollector;
-import java.io.IOException;
 import static java.util.Optional.ofNullable;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http2.HTTP2Cipher;
@@ -42,30 +39,6 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 public class JettyHttp2Creator {
 
   private JettyHttp2Creator() {
-  }
-
-  static HTTPServer metricServer;
-
-  /**
-   * Starts the metrics server.
-   * Port is set via env JAVALIN_PROMETHEUS_PORT.
-   * @param env the environment container
-   */
-  public static void startMetrics(Env env) {
-    if (metricServer != null) {
-      metricServer.stop();
-    }
-    try { metricServer = new HTTPServer(getPrometheusPort(env)); } catch (IOException ex) { throw new ServerException(ex.getMessage(), ex); }
-  }
-
-  /**
-   * Stops the metrics server.
-   */
-  public static void stopMetrics() {
-    if (metricServer != null) {
-      metricServer.stop();
-    }
-    metricServer = null;
   }
 
   /**
@@ -140,12 +113,6 @@ public class JettyHttp2Creator {
     server.addConnector(http2Connector);
 
     return server;
-  }
-
-  private static int getPrometheusPort(Env env) {
-    return ofNullable(env.get(() -> "JAVALIN_PROMETHEUS_PORT"))
-              .map(Integer::valueOf)
-              .orElse(7080);
   }
 
   private static int getHttp2Port(Env env) {

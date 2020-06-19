@@ -16,7 +16,7 @@
 package com.github.apilab.rest.testmodules;
 
 import com.github.apilab.core.ApplicationLifecycle;
-import com.github.apilab.rest.RESTModule;
+import com.github.apilab.rest.JavalinModule;
 import java.util.Set;
 import javax.inject.Singleton;
 import com.github.apilab.core.ApplicationLifecycleItem;
@@ -25,7 +25,7 @@ import com.github.apilab.core.ApplicationLifecycleItem;
  *
  * @author Raffaele Ragni
  */
-@dagger.Component(modules = {RESTModule.class, ComponentsModule.class})
+@dagger.Component(modules = {JavalinModule.class, ComponentsModule.class})
 @Singleton
 public interface ApplicationComponent {
   ApplicationLifecycle instance();

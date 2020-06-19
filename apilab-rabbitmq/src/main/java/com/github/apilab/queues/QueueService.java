@@ -19,6 +19,7 @@ import com.github.apilab.queues.exceptions.QueueMessagingException;
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Delivery;
 import java.io.IOException;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.Map;
@@ -74,11 +75,13 @@ public abstract class QueueService<T> {
     this.options = options;
   }
 
+  public abstract void receive(T message);
+
   public void send(T message) {
     withinChannel(rabbitFactory, ch -> {
       try {
         queueDeclare(ch);
-        ch.basicPublish("", queueName, null, gson.toJson(message).getBytes(UTF_8));
+        queueSend(ch, message);
         LOG.debug("Sent messsage: {}", message);
       } catch (IOException ex) {
         throw new QueueMessagingException(ex.getMessage(), ex);
@@ -86,7 +89,9 @@ public abstract class QueueService<T> {
     });
   }
 
-  public abstract void receive(T message);
+  private void queueSend(Channel ch, T message) throws IOException {
+    ch.basicPublish("", queueName, null, gson.toJson(message).getBytes(UTF_8));
+  }
 
   /**
    * Registers the queue listeners, and puts this class on listen.
@@ -102,25 +107,8 @@ public abstract class QueueService<T> {
       var connection = rabbitFactory.newConnection(); //NOSONAR
       var channel = connection.createChannel();
       queueDeclare(channel);
-      var tag = channel.basicConsume(queueName, false, (t, d) -> {
-        try {
-          var message = Optional.ofNullable(d.getBody())
-            .map(b -> new String(b, UTF_8)).orElse(null);
-          receive(gson.fromJson(message, clazz));
-          channel.basicAck(d.getEnvelope().getDeliveryTag(), false);
-        } catch (IOException | RuntimeException ex) {
-          // Must swallow all exceptions or the queue consumer will die otherwise.
-          // Give an explicit NACK so the message ends up in the dead letter queue
-          // and it is not requeued. Retry behavior will kick in in the DLQ later.
-          try {
-            channel.basicNack(d.getEnvelope().getDeliveryTag(), false, false);
-          } catch (RuntimeException ex2) {
-            LoggerFactory.getLogger(this.getClass()).error(ex2.getMessage(), ex2);
-          }
-          LoggerFactory.getLogger(this.getClass()).error(ex.getMessage(), ex);
-        }
-      }, t -> {});
-      deregisterCallback= Optional.of(() -> {
+      var tag = registerConsumer(channel);
+      deregisterCallback = Optional.of(() -> {
         try { channel.basicCancel(tag); } catch (IOException ex) { LoggerFactory.getLogger(QueueService.class).warn(ex.getMessage(), ex); }
         try { channel.close(); } catch (IOException | TimeoutException ex) { LoggerFactory.getLogger(QueueService.class).warn(ex.getMessage(), ex); }
         try { connection.close(); } catch (IOException ex) { LoggerFactory.getLogger(QueueService.class).warn(ex.getMessage(), ex); }
@@ -128,6 +116,31 @@ public abstract class QueueService<T> {
     } catch (IOException | TimeoutException ex) {
       throw new QueueMessagingException(ex.getMessage(), ex);
     }
+  }
+
+  private String registerConsumer(Channel channel) throws IOException {
+    return channel.basicConsume(queueName, false, (t, d) -> {
+      try {
+        consumeMessage(d);
+        channel.basicAck(d.getEnvelope().getDeliveryTag(), false);
+      } catch (IOException | RuntimeException ex) {
+        // Must swallow all exceptions or the queue consumer will die otherwise.
+        // Give an explicit NACK so the message ends up in the dead letter queue
+        // and it is not requeued. Retry behavior will kick in in the DLQ later.
+        try {
+          channel.basicNack(d.getEnvelope().getDeliveryTag(), false, false);
+        } catch (RuntimeException ex2) {
+          LoggerFactory.getLogger(this.getClass()).error(ex2.getMessage(), ex2);
+        }
+        LoggerFactory.getLogger(this.getClass()).error(ex.getMessage(), ex);
+      }
+    }, t -> {});
+  }
+
+  private void consumeMessage(Delivery d) {
+    var message = Optional.ofNullable(d.getBody())
+      .map(b -> new String(b, UTF_8)).orElse(null);
+    receive(gson.fromJson(message, clazz));
   }
 
   /**

@@ -52,7 +52,7 @@ public class JavalinJWTFilter implements Plugin, Handler {
    *
    * @param configuration The configuration for this filter
    */
-  public JavalinJWTFilter(Configuration configuration) {
+  public JavalinJWTFilter(AuthConfiguration configuration) {
     // Optional.of ensures it will be present and cannot be null
     this.toRole = Optional.of(configuration.roleMapper()).get();
     this.secret = configuration.jwtSecret();

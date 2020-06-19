@@ -25,10 +25,10 @@ import com.github.apilab.core.ApplicationLifecycleItem;
  *
  * @author Raffaele Ragni
  */
-public class RESTService implements ApplicationLifecycleItem {
+public class JavalinLifecycle implements ApplicationLifecycleItem {
 
   @Inject
-  public RESTService() {
+  public JavalinLifecycle() {
     ////
   }
 
@@ -41,7 +41,6 @@ public class RESTService implements ApplicationLifecycleItem {
       return;
     }
     javalin.start();
-    JettyHttp2Creator.startMetrics(env);
   }
 
   @Override
@@ -50,7 +49,6 @@ public class RESTService implements ApplicationLifecycleItem {
       return;
     }
     javalin.stop();
-    JettyHttp2Creator.stopMetrics();
   }
 
   private boolean enabled() {

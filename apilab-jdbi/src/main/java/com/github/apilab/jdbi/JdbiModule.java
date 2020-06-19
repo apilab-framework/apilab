@@ -66,29 +66,24 @@ public class JdbiModule {
     var password = ofNullable(env.get(() -> "API_DATABASE_PASSWORD")).orElse("postgres");
     var maxConnections = ofNullable(env.get(() -> "API_DATABASE_MAXPOOLSZE")).map(Integer::valueOf).orElse(100);
 
+    processMigrations(env, url, username, password);
+
+    var hikDS = createHikariPool(url, username, password, maxConnections);
+    var jdbi = Jdbi.create(hikDS);
+
+    registerImmutables(jdbi, jdbiImmutables);
+
+    return jdbi;
+  }
+
+  private void processMigrations(Env env, String url, String username, String password) {
     boolean enableMigrations = Optional.ofNullable(env.get(() -> "API_ENABLE_MIGRATION"))
-       .map(Boolean::valueOf)
-       .orElse(false);
+      .map(Boolean::valueOf)
+      .orElse(false);
     if (enableMigrations) {
       LOG.info("MIGRATION ENABLED");
       runMigrations("db/changelog.xml", url, username, password);
     }
-
-    var hikConf = new HikariConfig();
-    hikConf.setJdbcUrl(url);
-    hikConf.setUsername(username);
-    hikConf.setPassword(password);
-    hikConf.setMaximumPoolSize(maxConnections);
-    var hikDS = new HikariDataSource(hikConf);
-
-    var jdbi = Jdbi.create(hikDS);
-
-    // Automatically register any class given for jdbi immutable plugin
-    // collection named 'jdbiImmutables' in the dependency graph as Set of classes.
-    jdbi.getConfig(JdbiImmutables.class)
-      .registerImmutable(jdbiImmutables);
-
-    return jdbi;
   }
 
   public static void runMigrations(String migrationPath, String url, String username, String password) {
@@ -99,5 +94,21 @@ public class JdbiModule {
     } catch (Exception ex) {
       throw new MigrationException(ex.getMessage(), ex);
     }
+  }
+
+  private HikariDataSource createHikariPool(String url, String username, String password, Integer maxConnections) {
+    var hikConf = new HikariConfig();
+    hikConf.setJdbcUrl(url);
+    hikConf.setUsername(username);
+    hikConf.setPassword(password);
+    hikConf.setMaximumPoolSize(maxConnections);
+    return new HikariDataSource(hikConf);
+  }
+
+  private void registerImmutables(Jdbi jdbi, Set<Class<?>> jdbiImmutables) {
+    // Automatically register any class given for jdbi immutable plugin
+    // collection named 'jdbiImmutables' in the dependency graph as Set of classes.
+    jdbi.getConfig(JdbiImmutables.class)
+      .registerImmutable(jdbiImmutables);
   }
 }

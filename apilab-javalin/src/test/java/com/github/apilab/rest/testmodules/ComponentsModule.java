@@ -18,8 +18,8 @@ package com.github.apilab.rest.testmodules;
 import com.github.apilab.core.Env;
 import com.github.apilab.rest.Endpoint;
 import com.github.apilab.rest.GetEndpointSample;
-import com.github.apilab.rest.ImmutableRESTInitializer;
-import com.github.apilab.rest.RESTInitializer;
+import com.github.apilab.rest.auth.AuthConfiguration;
+import com.github.apilab.rest.auth.ImmutableAuthConfiguration;
 import com.google.gson.Gson;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
@@ -65,7 +65,7 @@ public class ComponentsModule {
 
   @Provides
   @Singleton
-  public RESTInitializer initializer() {
-    return ImmutableRESTInitializer.builder().build();
+  public AuthConfiguration initializer() {
+    return ImmutableAuthConfiguration.builder().build();
   }
 }

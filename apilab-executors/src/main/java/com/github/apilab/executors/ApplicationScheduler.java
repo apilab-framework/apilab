@@ -28,15 +28,15 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Raffaele Ragni
  */
-public class Executor {
+public class ApplicationScheduler {
 
-  private static final Logger LOG = LoggerFactory.getLogger(Executor.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ApplicationScheduler.class);
 
   Optional<ScheduledExecutorService> scheduler = empty();
   @Inject Set<Scheduled> scheduled;
 
   @Inject
-  public Executor() {
+  public ApplicationScheduler() {
     // Constructor injector
   }
 

@@ -27,12 +27,12 @@ import static org.mockito.Mockito.verify;
  */
 public class ExecutorServiceTest {
 
-  ExecutorsService service;
+  ApplicationExecutorLifecycle service;
 
   // BeforeEach just doesn't work, have no time to deal with people's libraries while maintaining my own.
   public void startup() {
-    service = new ExecutorsService();
-    service.applicationScheduler = mock(Executor.class);
+    service = new ApplicationExecutorLifecycle();
+    service.applicationScheduler = mock(ApplicationScheduler.class);
     service.env = new Env();
   }
 

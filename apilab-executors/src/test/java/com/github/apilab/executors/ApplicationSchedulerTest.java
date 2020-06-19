@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public class ApplicationSchedulerTest {
   @Test
   public void testScheduler() throws InterruptedException {
-    var scheduler = new Executor();
+    var scheduler = new ApplicationScheduler();
 
     scheduler.scheduled = Set.of(new MyScheduled(), new MyScheduledExceptional());
 

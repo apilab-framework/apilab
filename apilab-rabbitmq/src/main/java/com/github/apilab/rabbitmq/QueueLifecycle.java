@@ -29,16 +29,16 @@ import com.github.apilab.core.ApplicationLifecycleItem;
  *
  * @author Raffaele Ragni
  */
-public class RabbitMQService implements ApplicationLifecycleItem {
+public class QueueLifecycle implements ApplicationLifecycleItem {
 
-  private static final Logger LOG = LoggerFactory.getLogger(RabbitMQService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(QueueLifecycle.class);
 
   @Inject Env env;
   @Inject ConnectionFactory rabbitConnectionFactory;
   @Inject Set<QueueService> queueServices;
 
   @Inject
-  public RabbitMQService() {
+  public QueueLifecycle() {
     ////
   }
 

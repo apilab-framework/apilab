@@ -15,13 +15,14 @@
  */
 package com.github.apilab.core;
 
+import dagger.Component;
 import javax.inject.Singleton;
 
 /**
  *
  * @author Raffaele Ragni
  */
-@dagger.Component(modules = {GSONModule.class, ComponentModule.class})
+@Component(modules = {GSONModule.class})
 @Singleton
 public interface ApplicationComponent {
   ApplicationLifecycle instance();

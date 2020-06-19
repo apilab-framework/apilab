@@ -35,21 +35,4 @@ public class JettyHttp2CreatorTest {
     assertThat("Server built", server, is(not(nullValue())));
   }
 
-  @Test
-  public void testMetrics() {
-
-    JettyHttp2Creator.stopMetrics();
-
-    JettyHttp2Creator.startMetrics(new Env());
-    JettyHttp2Creator.stopMetrics();
-
-    assertThat("metrics server created", JettyHttp2Creator.metricServer, is(nullValue()));
-
-    JettyHttp2Creator.startMetrics(new Env());
-    JettyHttp2Creator.startMetrics(new Env());
-    JettyHttp2Creator.stopMetrics();
-
-    assertThat("metrics server created", JettyHttp2Creator.metricServer, is(nullValue()));
-  }
-
 }

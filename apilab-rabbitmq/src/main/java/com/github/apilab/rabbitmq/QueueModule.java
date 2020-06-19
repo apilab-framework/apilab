@@ -35,13 +35,13 @@ import com.github.apilab.core.ApplicationLifecycleItem;
  * @author Raffaele Ragni
  */
 @dagger.Module
-public class RabbitMQModule {
-  private static final Logger LOG = LoggerFactory.getLogger(RabbitMQModule.class);
+public class QueueModule {
+  private static final Logger LOG = LoggerFactory.getLogger(QueueModule.class);
 
   @Provides
   @Singleton
   @IntoSet
-  public ApplicationLifecycleItem service(RabbitMQService service) {
+  public ApplicationLifecycleItem service(QueueLifecycle service) {
     return service;
   }
 

@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapterFactory;
 import dagger.Provides;
+import dagger.multibindings.IntoSet;
 import java.util.ServiceLoader;
 import javax.inject.Singleton;
 import net.dongliu.gson.GsonJava8TypeAdapterFactory;
@@ -32,6 +33,26 @@ import net.dongliu.gson.GsonJava8TypeAdapterFactory;
  */
 @dagger.Module
 public class GSONModule {
+
+  @Provides
+  @IntoSet
+  public ApplicationLifecycleItem dummyItem() {
+    // This dummy item will populate the Set so that the application can start
+    // even if no module is being used, otherwise it will force the user to
+    // provide an empty set otherwise, and this should instead cover for that
+    // conventional case. This is a requirement side effect because of how dagger2 works.
+    return new ApplicationLifecycleItem() {
+      @Override
+      public void start() {
+        ///
+      }
+
+      @Override
+      public void stop() {
+        ///
+      }
+    };
+  }
 
   @Provides
   @Singleton

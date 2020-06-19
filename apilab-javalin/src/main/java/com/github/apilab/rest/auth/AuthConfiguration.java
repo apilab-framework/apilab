@@ -16,10 +16,12 @@
 package com.github.apilab.rest.auth;
 
 import com.auth0.jwt.algorithms.Algorithm;
+import com.github.apilab.core.Env;
 import io.javalin.core.security.Role;
 import java.util.Optional;
 import java.util.function.Function;
 import org.immutables.value.Value;
+import org.immutables.value.Value.Default;
 
 /**
  * Configuration for the filter.
@@ -32,8 +34,20 @@ import org.immutables.value.Value;
  * @author Raffaele Ragni raffaele.ragni@gmail.com
  */
 @Value.Immutable
-public interface Configuration {
-  Function<String, Role> roleMapper();
-  Optional<Algorithm> jwtSecret();
+public interface AuthConfiguration {
+  @Default default Function<String, Role> roleMapper() {
+    return s -> new Role() {
+      @Override
+      public String toString() {
+        return s;
+      }
+    };
+  }
+
+  @Default default Optional<Algorithm> jwtSecret() {
+    return Optional
+      .ofNullable(new Env().get(() -> "API_JWT_SECRET"))
+      .map(Algorithm::HMAC256);
+  }
   Optional<String> jwtRolesProperty();
 }

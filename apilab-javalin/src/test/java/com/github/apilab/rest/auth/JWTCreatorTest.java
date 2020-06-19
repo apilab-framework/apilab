@@ -18,6 +18,7 @@ package com.github.apilab.rest.auth;
 import com.auth0.jwt.algorithms.Algorithm;
 import static com.github.apilab.rest.auth.Roles.ADMIN;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -30,12 +31,12 @@ import org.junit.jupiter.api.Test;
  */
 public class JWTCreatorTest {
 
-  private static final Configuration BASE_CONFIG = ImmutableConfiguration.builder()
+  private static final AuthConfiguration BASE_CONFIG = ImmutableAuthConfiguration.builder()
       .roleMapper(Roles::valueOf)
       .build();
-  private static final Configuration EXTENDED_CONFIG = ImmutableConfiguration.builder()
+  private static final AuthConfiguration EXTENDED_CONFIG = ImmutableAuthConfiguration.builder()
       .roleMapper(Roles::valueOf)
-      .jwtSecret(Algorithm.HMAC256("secret"))
+      .jwtSecret(Optional.of(Algorithm.HMAC256("secret")))
       .jwtRolesProperty("Roles")
       .build();
 

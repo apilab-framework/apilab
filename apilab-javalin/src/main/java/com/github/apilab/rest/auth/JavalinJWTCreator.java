@@ -43,7 +43,7 @@ public class JavalinJWTCreator {
    * New instance for the maker
    * @param configuration Configuration including the secrets for signing.
    */
-  public JavalinJWTCreator(Configuration configuration) {
+  public JavalinJWTCreator(AuthConfiguration configuration) {
     this.secret = configuration.jwtSecret().orElseThrow(() -> new IllegalArgumentException(
       format("secret is required for %s", JavalinJWTCreator.class.getName())
     ));

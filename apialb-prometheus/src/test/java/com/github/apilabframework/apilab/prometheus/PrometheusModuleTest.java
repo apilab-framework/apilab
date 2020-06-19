@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Raffaele Ragni.
+ * Copyright 2019 Raffaele Ragni.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilab.core;
+package com.github.apilabframework.apilab.prometheus;
 
-import dagger.Provides;
-import static java.util.Collections.emptySet;
-import java.util.Set;
-import javax.inject.Singleton;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.mock;
 
 /**
  *
  * @author Raffaele Ragni
  */
-@dagger.Module
-public class ComponentModule {
-  @Provides
-  @Singleton
-  public Set<ApplicationLifecycleItem> services() {
-    return emptySet();
+public class PrometheusModuleTest {
+  @Test
+  public void testReturn() {
+    var module = new PrometheusModule();
+    var itemToPass = mock(PrometheusLifecycle.class);
+
+    var itemToCheck = module.lifecycle(itemToPass);
+
+    assertThat(itemToPass, is(itemToCheck));
   }
 }

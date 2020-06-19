@@ -22,6 +22,7 @@ import static com.github.apilab.rest.auth.JavalinJWTFilter.REQ_ATTR_SUBJECT;
 import static com.github.apilab.rest.auth.Roles.USER;
 import io.javalin.Javalin;
 import io.javalin.http.util.ContextUtil;
+import java.util.Optional;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,12 +39,12 @@ import static org.mockito.Mockito.when;
  */
 public class RolesFilterTest {
 
-  private static final Configuration BASE_CONFIG = ImmutableConfiguration.builder()
+  private static final AuthConfiguration BASE_CONFIG = ImmutableAuthConfiguration.builder()
       .roleMapper(Roles::valueOf)
       .build();
-  private static final Configuration EXTENDED_CONFIG = ImmutableConfiguration.builder()
+  private static final AuthConfiguration EXTENDED_CONFIG = ImmutableAuthConfiguration.builder()
       .roleMapper(Roles::valueOf)
-      .jwtSecret(Algorithm.HMAC256("secret"))
+      .jwtSecret(Optional.of(Algorithm.HMAC256("secret")))
       .jwtRolesProperty("Roles")
       .build();
 

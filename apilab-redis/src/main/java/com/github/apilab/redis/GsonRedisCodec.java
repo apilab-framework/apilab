@@ -21,7 +21,7 @@ import java.nio.ByteBuffer;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- *
+ * Simple json codec using gson, for entries in redis.
  * @author Raffaele Ragni
  * @param <T> type of the object in redis
  */

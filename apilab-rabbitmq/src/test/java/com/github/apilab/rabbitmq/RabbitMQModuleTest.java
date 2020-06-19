@@ -38,13 +38,13 @@ public class RabbitMQModuleTest {
   public void testInjectedLifecycle() {
     var services = DaggerApplicationComponent.create().services();
 
-    assertThat("Service is loaded", services, hasItem(isA(RabbitMQService.class)));
+    assertThat("Service is loaded", services, hasItem(isA(QueueLifecycle.class)));
   }
 
   @Test
   public void testModule() throws IOException, TimeoutException {
     var env = new Env();
-    var module = new RabbitMQModule();
+    var module = new QueueModule();
 
     module.rabbitMQConnectionFactory(env);
 

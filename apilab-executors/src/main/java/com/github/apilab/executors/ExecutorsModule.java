@@ -29,7 +29,7 @@ public class ExecutorsModule {
   @Provides
   @Singleton
   @IntoSet
-  public ApplicationLifecycleItem service(ExecutorsService service) {
+  public ApplicationLifecycleItem service(ApplicationExecutorLifecycle service) {
     return service;
   }
 }

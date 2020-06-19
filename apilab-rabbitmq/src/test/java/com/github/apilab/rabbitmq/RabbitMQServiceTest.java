@@ -29,13 +29,13 @@ import static org.mockito.Mockito.verify;
  */
 public class RabbitMQServiceTest {
 
-  RabbitMQService service;
+  QueueLifecycle service;
   QueueService<String> queueService;
 
   // BeforeEach just doesn't work, have no time to deal with people's libraries while maintaining my own.
   public void startup() {
     queueService = mock(QueueService.class);
-    service = new RabbitMQService();
+    service = new QueueLifecycle();
     service.queueServices = Set.of(queueService);
     service.env = new Env();
   }

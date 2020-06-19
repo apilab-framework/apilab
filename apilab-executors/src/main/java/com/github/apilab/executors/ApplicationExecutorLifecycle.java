@@ -24,13 +24,13 @@ import com.github.apilab.core.ApplicationLifecycleItem;
  *
  * @author Raffaele Ragni
  */
-public class ExecutorsService implements ApplicationLifecycleItem {
+public class ApplicationExecutorLifecycle implements ApplicationLifecycleItem {
 
   @Inject Env env;
-  @Inject Executor applicationScheduler;
+  @Inject ApplicationScheduler applicationScheduler;
 
   @Inject
-  public ExecutorsService() {
+  public ApplicationExecutorLifecycle() {
     ////
   }
 

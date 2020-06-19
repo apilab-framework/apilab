@@ -15,9 +15,7 @@
  */
 package com.github.apilab.rest;
 
-import com.auth0.jwt.algorithms.Algorithm;
 import com.github.apilab.core.Env;
-import com.github.apilab.rest.auth.ImmutableConfiguration;
 import com.github.apilab.rest.auth.JavalinJWTAccessManager;
 import com.github.apilab.rest.auth.JavalinJWTFilter;
 import com.github.apilab.rest.exceptions.ServerException;
@@ -49,21 +47,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import com.github.apilab.core.ApplicationLifecycleItem;
+import com.github.apilab.rest.auth.AuthConfiguration;
 
 /**
  *
  * @author Raffaele Ragni
  */
 @dagger.Module
-public class RESTModule {
+public class JavalinModule {
 
   private static final String HEADER_REQUEST_UUID = "X-APP-Request-UUID";
   // This property name will appear as is in log key/value
   private static final String MDC_REQUEST_UUID = "request_uuid";
 
-  private static final Logger LOG = LoggerFactory.getLogger(RESTModule.class);
+  private static final Logger LOG = LoggerFactory.getLogger(JavalinModule.class);
 
-  @Provides @IntoSet ApplicationLifecycleItem service(RESTService service) {
+  @Provides @IntoSet ApplicationLifecycleItem service(JavalinLifecycle service) {
     return service;
   }
 
@@ -81,7 +80,7 @@ public class RESTModule {
   @Provides @Singleton
   public Javalin javalin(
       Env env,
-      RESTInitializer initializer,
+      AuthConfiguration authConfiguration,
       Gson gson,
       Set<Endpoint> endpoints,
       @Named("healthChecks") Map<String, Supplier<Boolean>> healthChecks) {
@@ -94,10 +93,7 @@ public class RESTModule {
       config.server(() -> JettyHttp2Creator.createHttp2Server(env));
       config.accessManager(new JavalinJWTAccessManager());
       config.registerPlugin(new OpenApiPlugin(getOpenApiOptions(gson)));
-      config.registerPlugin(new JavalinJWTFilter(ImmutableConfiguration.builder()
-        .roleMapper(initializer.roleMapper())
-        .jwtSecret(createAlgorithmFromEnvironment(env))
-        .build()));
+      config.registerPlugin(new JavalinJWTFilter(authConfiguration));
       config.registerPlugin(new HealthCheckPlugin(healthChecks, env));
     });
 
@@ -162,21 +158,5 @@ public class RESTModule {
       .ignorePath("/")
       .ignorePath("/status/*")
       .swagger(new SwaggerOptions("/swagger").title("API"));
-  }
-
-  private Optional<Algorithm> createAlgorithmFromEnvironment(Env env) {
-    // Case 1: plain secret string, using hmac256, from variable API_JWT_SECRET
-    // Case 2: rsa pubkey for verify (no priv): the JWT auth plugin only does verification,
-    //         if there is a token creation class to be made, will be in the future elsewhere.
-    //         API_JWT_PUBLIC_KEY -> used for case 2
-    //         [API_JWT_PRIVATE_KEY] -> complementary var to be used in another class later.
-    // Which one takes precedence given all env variables set?
-    // RSA is more secure so that should come first.
-    // Functions have hard coded algs and bits so how to split them (strategy pattern?)
-    // Which is the default?
-
-    return Optional
-      .ofNullable(env.get(() -> "API_JWT_SECRET"))
-      .map(Algorithm::HMAC256);
   }
 }

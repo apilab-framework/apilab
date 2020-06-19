@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 r.ragni.
+ * Copyright 2019 Raffaele Ragni.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilab.rest;
+package com.github.apilabframework.apilab.prometheus;
 
-import io.javalin.core.security.Role;
-import java.util.function.Function;
-import org.immutables.value.Value;
+import com.github.apilab.core.ApplicationLifecycleItem;
+import dagger.Provides;
+import dagger.multibindings.IntoSet;
+import javax.inject.Singleton;
 
 /**
  *
  * @author Raffaele Ragni
  */
-@Value.Style(jdkOnly = true)
-@Value.Immutable
-public interface RESTInitializer {
-  @Value.Default default Function<String, Role> roleMapper() { return s -> new Role(){
-    @Override
-    public String toString() {
-      return s;
-    }
-  }; }
+@dagger.Module
+public class PrometheusModule {
+  @Provides
+  @Singleton
+  @IntoSet
+  public ApplicationLifecycleItem lifecycle(PrometheusLifecycle lifecycle) {
+    return lifecycle;
+  }
 }

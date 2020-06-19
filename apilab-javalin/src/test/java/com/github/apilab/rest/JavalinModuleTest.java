@@ -17,6 +17,7 @@ package com.github.apilab.rest;
 
 import com.github.apilab.core.GSONModule;
 import com.github.apilab.core.Env;
+import com.github.apilab.rest.auth.ImmutableAuthConfiguration;
 import com.github.apilab.rest.exceptions.UnprocessableEntityException;
 import com.github.apilab.rest.testmodules.DaggerApplicationComponent;
 import io.javalin.Javalin;
@@ -37,23 +38,23 @@ import org.junit.jupiter.api.Test;
  *
  * @author Raffaele Ragni
  */
-public class RESTModuleTest {
+public class JavalinModuleTest {
 
   @Test
   public void testInjectedLifecycle() {
     var services = DaggerApplicationComponent.create().services();
 
-    assertThat("Service is loaded", services, hasItem(isA(RESTService.class)));
+    assertThat("Service is loaded", services, hasItem(isA(JavalinLifecycle.class)));
   }
 
   @Test
   public void testJavalin() throws IOException {
-    var config = new RESTModule();
+    var config = new JavalinModule();
     var env = new Env();
     System.setProperty("API_ENABLE_ENDPOINTS", "false");
 
     config.javalin(env,
-      ImmutableRESTInitializer.builder().build(),
+      ImmutableAuthConfiguration.builder().build(),
       new GSONModule().gson(),
       Set.of(new GetEndpointSample()),
       Map.of("test", (Supplier<Boolean>) () -> true));
@@ -61,7 +62,7 @@ public class RESTModuleTest {
     System.setProperty("API_ENABLE_ENDPOINTS", "true");
 
     Javalin javalin = config.javalin(env,
-      ImmutableRESTInitializer.builder().build(),
+      ImmutableAuthConfiguration.builder().build(),
       new GSONModule().gson(),
       Set.of(new GetEndpointSample()),
       Map.of("test", (Supplier<Boolean>) () -> true));
@@ -94,7 +95,7 @@ public class RESTModuleTest {
 
   @Test
   public void testInitializerDefaultValue() {
-    var initializer = ImmutableRESTInitializer.builder().build();
+    var initializer = ImmutableAuthConfiguration.builder().build();
     var fn = initializer.roleMapper();
     assertThat("Mapping string straight away", fn.apply("test").toString(), is("test"));
   }

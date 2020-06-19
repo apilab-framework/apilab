@@ -12,6 +12,7 @@
     <module>apilab-rabbitmq</module>
     <module>apilab-executors</module>
     <module>apilab-redis</module>
+    <module>apialb-prometheus</module>
   </modules>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
