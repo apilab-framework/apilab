@@ -15,9 +15,9 @@
  */
 package com.github.apilab.prometheus;
 
-import com.github.apilab.prometheus.PrometheusLifecycle;
 import com.github.apilab.core.Env;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.nullValue;
 import org.junit.jupiter.api.Test;
@@ -34,14 +34,28 @@ public class PrometheusTest {
     var lifecycle = new PrometheusLifecycle();
     lifecycle.env = new Env();
 
+    System.setProperty("API_ENABLE_PROMETHEUS", "false");
+
+    lifecycle.start();
     lifecycle.stop();
     lifecycle.start();
+    assertThat("metrics server is not started", lifecycle.metricServer, is(nullValue()));
+
+
+    System.setProperty("API_ENABLE_PROMETHEUS", "true");
+
+    lifecycle.stop();
+    lifecycle.start();
+    assertThat("metrics server is in the end started", lifecycle.metricServer, is(not(nullValue())));
+
     lifecycle.stop();
 
     assertThat("metrics server is in the end stopped", lifecycle.metricServer, is(nullValue()));
 
     lifecycle.start();
     lifecycle.start();
+    assertThat("metrics server is in the end started", lifecycle.metricServer, is(not(nullValue())));
+
     lifecycle.stop();
 
     assertThat("metrics server is in the end stopped", lifecycle.metricServer, is(nullValue()));

@@ -20,6 +20,7 @@ import com.github.apilab.core.Env;
 import io.prometheus.client.exporter.HTTPServer;
 import io.prometheus.client.hotspot.DefaultExports;
 import java.io.IOException;
+import java.util.Optional;
 import static java.util.Optional.ofNullable;
 import javax.inject.Inject;
 
@@ -43,6 +44,10 @@ public class PrometheusLifecycle implements ApplicationLifecycleItem {
    */
   @Override
   public void start() {
+    if (!enabled()) {
+      return;
+    }
+
     ensureServerIsStopped();
     try { metricServer = new HTTPServer(getPrometheusPort(env)); } catch (IOException ex) { throw new IllegalStateException(ex.getMessage(), ex); }
   }
@@ -52,6 +57,10 @@ public class PrometheusLifecycle implements ApplicationLifecycleItem {
    */
   @Override
   public void stop() {
+    if (!enabled()) {
+      return;
+    }
+
     ensureServerIsStopped();
     metricServer = null;
   }
@@ -60,6 +69,12 @@ public class PrometheusLifecycle implements ApplicationLifecycleItem {
     if (metricServer != null) {
       metricServer.stop();
     }
+  }
+
+  private boolean enabled() {
+    return Optional.ofNullable(env.get(() -> "API_ENABLE_PROMETHEUS"))
+       .map(Boolean::valueOf)
+       .orElse(false);
   }
 
   private static int getPrometheusPort(Env env) {
