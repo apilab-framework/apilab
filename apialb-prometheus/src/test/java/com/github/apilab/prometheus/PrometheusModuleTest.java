@@ -13,23 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilabframework.apilab.prometheus;
+package com.github.apilab.prometheus;
 
-import com.github.apilab.core.ApplicationLifecycleItem;
-import dagger.Provides;
-import dagger.multibindings.IntoSet;
-import javax.inject.Singleton;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.isA;
+import static org.hamcrest.MatcherAssert.assertThat;
+import org.junit.jupiter.api.Test;
 
 /**
  *
  * @author Raffaele Ragni
  */
-@dagger.Module
-public class PrometheusModule {
-  @Provides
-  @Singleton
-  @IntoSet
-  public ApplicationLifecycleItem lifecycle(PrometheusLifecycle lifecycle) {
-    return lifecycle;
+public class PrometheusModuleTest {
+  @Test
+  public void testReturn() {
+    var services = DaggerApplicationComponent.create().services();
+
+    assertThat("Service is loaded", services, hasItem(isA(PrometheusLifecycle.class)));
   }
 }

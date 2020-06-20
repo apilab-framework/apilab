@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilabframework.apilab.prometheus;
+package com.github.apilab.prometheus;
 
-import com.github.apilab.core.Env;
-import dagger.Provides;
+import com.github.apilab.prometheus.PrometheusModule;
+import com.github.apilab.core.ApplicationLifecycle;
+import java.util.Set;
 import javax.inject.Singleton;
+import com.github.apilab.core.ApplicationLifecycleItem;
 
 /**
  *
  * @author Raffaele Ragni
  */
-@dagger.Module
-public class ComponentsModule {
-  @Provides
-  @Singleton
-  public Env env() {
-    return new Env();
-  }
+@dagger.Component(modules = {PrometheusModule.class, ComponentsModule.class})
+@Singleton
+public interface ApplicationComponent {
+  ApplicationLifecycle instance();
+  Set<ApplicationLifecycleItem> services();
 }

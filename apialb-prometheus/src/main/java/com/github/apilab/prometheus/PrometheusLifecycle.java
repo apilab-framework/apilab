@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilabframework.apilab.prometheus;
+package com.github.apilab.prometheus;
 
 import com.github.apilab.core.ApplicationLifecycleItem;
 import com.github.apilab.core.Env;

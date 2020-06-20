@@ -13,22 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilabframework.apilab.prometheus;
+package com.github.apilab.prometheus;
 
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.isA;
+import com.github.apilab.prometheus.PrometheusLifecycle;
+import com.github.apilab.core.Env;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsNull.nullValue;
 import org.junit.jupiter.api.Test;
 
 /**
  *
  * @author Raffaele Ragni
  */
-public class PrometheusModuleTest {
-  @Test
-  public void testReturn() {
-    var services = DaggerApplicationComponent.create().services();
+public class PrometheusTest {
 
-    assertThat("Service is loaded", services, hasItem(isA(PrometheusLifecycle.class)));
+  @Test
+  public void testMetrics() {
+
+    var lifecycle = new PrometheusLifecycle();
+    lifecycle.env = new Env();
+
+    lifecycle.stop();
+    lifecycle.start();
+    lifecycle.stop();
+
+    assertThat("metrics server is in the end stopped", lifecycle.metricServer, is(nullValue()));
+
+    lifecycle.start();
+    lifecycle.start();
+    lifecycle.stop();
+
+    assertThat("metrics server is in the end stopped", lifecycle.metricServer, is(nullValue()));
   }
 }

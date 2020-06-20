@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Raffaele Ragni.
+ * Copyright 2019 Raffaele Ragni.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.apilabframework.apilab.prometheus;
+package com.github.apilab.prometheus;
 
-import com.github.apilab.core.ApplicationLifecycle;
-import java.util.Set;
-import javax.inject.Singleton;
 import com.github.apilab.core.ApplicationLifecycleItem;
+import dagger.Provides;
+import dagger.multibindings.IntoSet;
+import javax.inject.Singleton;
 
 /**
  *
  * @author Raffaele Ragni
  */
-@dagger.Component(modules = {PrometheusModule.class, ComponentsModule.class})
-@Singleton
-public interface ApplicationComponent {
-  ApplicationLifecycle instance();
-  Set<ApplicationLifecycleItem> services();
+@dagger.Module
+public class PrometheusModule {
+  @Provides
+  @Singleton
+  @IntoSet
+  public ApplicationLifecycleItem lifecycle(PrometheusLifecycle lifecycle) {
+    return lifecycle;
+  }
 }
