@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Raffaele Ragni.
+ * Copyright 2020 Raffaele Ragni.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,19 @@
  */
 package com.github.apilabframework.apilab.prometheus;
 
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.isA;
-import static org.hamcrest.MatcherAssert.assertThat;
-import org.junit.jupiter.api.Test;
+import com.github.apilab.core.Env;
+import dagger.Provides;
+import javax.inject.Singleton;
 
 /**
  *
  * @author Raffaele Ragni
  */
-public class PrometheusModuleTest {
-  @Test
-  public void testReturn() {
-    var services = DaggerApplicationComponent.create().services();
-
-    assertThat("Service is loaded", services, hasItem(isA(PrometheusLifecycle.class)));
+@dagger.Module
+public class ComponentsModule {
+  @Provides
+  @Singleton
+  public Env env() {
+    return new Env();
   }
 }
