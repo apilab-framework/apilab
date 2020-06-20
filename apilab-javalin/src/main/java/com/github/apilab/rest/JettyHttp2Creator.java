@@ -16,8 +16,8 @@
 package com.github.apilab.rest;
 
 import com.github.apilab.core.Env;
+import io.prometheus.client.Collector;
 import io.prometheus.client.CollectorRegistry;
-import io.prometheus.client.hotspot.DefaultExports;
 import io.prometheus.client.jetty.JettyStatisticsCollector;
 import static java.util.Optional.ofNullable;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
@@ -37,6 +37,8 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
  * @author Raffaele Ragni
  */
 public class JettyHttp2Creator {
+
+  private static volatile boolean metricsInitialized = false;
 
   private JettyHttp2Creator() {
   }
@@ -63,42 +65,13 @@ public class JettyHttp2Creator {
    * @return Jetty server
    */
   public static Server createHttp2Server(Env env) {
-
-    StatisticsHandler statisticsHandler = new StatisticsHandler();
-    CollectorRegistry.defaultRegistry.clear();
-    DefaultExports.initialize();
-    new JettyStatisticsCollector(statisticsHandler).register();
-
     Server server = new Server();
 
-    server.setHandler(statisticsHandler);
+    setupPrometheusMetrics(server);
+    setupPlainHttp(server, env);
 
-    // Javalin will take care of stopping the server
-    ServerConnector connector = new ServerConnector(server); //NOSONAR
-    connector.setPort(getHttp2Port(env));
-    server.addConnector(connector);
-
-    // HTTP Configuration
-    HttpConfiguration httpConfig = new HttpConfiguration();
-    httpConfig.setSendServerVersion(false);
-    httpConfig.setSecureScheme("https");
-    httpConfig.setSecurePort(getHttps2Port(env));
-
-    // SSL Context Factory for HTTPS and HTTP/2
-    SslContextFactory sslContextFactory = new SslContextFactory.Server();
-    // replace with your real keystore
-    sslContextFactory.setKeyStorePath(JettyHttp2Creator.class
-      .getResource(getHttps2CertClasspath(env)).toExternalForm());
-    // replace with your real password
-    sslContextFactory.setKeyStorePassword(getHttps2CertPassword(env));
-    sslContextFactory.setCipherComparator(HTTP2Cipher.COMPARATOR);
-    sslContextFactory.setProvider("Conscrypt");
-
-    // HTTPS Configuration
-    HttpConfiguration httpsConfig = new HttpConfiguration(httpConfig);
-    httpsConfig.addCustomizer(new SecureRequestCustomizer());
-
-    // HTTP/2 Connection Factory
+    var sslContextFactory = createSSLContextFactory(env);
+    var httpsConfig = createHttpsConfig(env);
     HTTP2ServerConnectionFactory h2 = new HTTP2ServerConnectionFactory(httpsConfig);
     ALPNServerConnectionFactory alpn = new ALPNServerConnectionFactory();
     alpn.setDefaultProtocol("h2");
@@ -113,6 +86,53 @@ public class JettyHttp2Creator {
     server.addConnector(http2Connector);
 
     return server;
+  }
+
+  private static SslContextFactory createSSLContextFactory(Env env) {
+    // SSL Context Factory for HTTPS and HTTP/2
+    SslContextFactory sslContextFactory = new SslContextFactory.Server();
+    // replace with your real keystore
+    sslContextFactory.setKeyStorePath(JettyHttp2Creator.class
+      .getResource(getHttps2CertClasspath(env)).toExternalForm());
+    // replace with your real password
+    sslContextFactory.setKeyStorePassword(getHttps2CertPassword(env));
+    sslContextFactory.setCipherComparator(HTTP2Cipher.COMPARATOR);
+    sslContextFactory.setProvider("Conscrypt");
+    return sslContextFactory;
+  }
+
+  private static HttpConfiguration createHttpsConfig(Env env) {
+    // HTTP Configuration
+    HttpConfiguration config = new HttpConfiguration();
+    config.setSendServerVersion(false);
+    config.setSecureScheme("https");
+    config.setSecurePort(getHttps2Port(env));
+    // HTTPS Configuration
+    HttpConfiguration httpsConfig = new HttpConfiguration(config);
+    httpsConfig.addCustomizer(new SecureRequestCustomizer());
+    return httpsConfig;
+  }
+
+  private static void setupPlainHttp(Server server, Env env) {
+    // Javalin will take care of stopping the server
+    ServerConnector connector = new ServerConnector(server); //NOSONAR
+    connector.setPort(getHttp2Port(env));
+    server.addConnector(connector);
+  }
+
+  private static void setupPrometheusMetrics(Server server) {
+    StatisticsHandler statisticsHandler = new StatisticsHandler();
+    var collector = new JettyStatisticsCollector(statisticsHandler);
+    initializeMetrics(collector);
+    server.setHandler(statisticsHandler);
+  }
+
+  private static synchronized void initializeMetrics(Collector collector) {
+    if (!metricsInitialized) {
+      var registry = CollectorRegistry.defaultRegistry;
+      registry.register(collector);
+      metricsInitialized = true;
+    }
   }
 
   private static int getHttp2Port(Env env) {

@@ -18,6 +18,7 @@ package com.github.apilab.prometheus;
 import com.github.apilab.core.ApplicationLifecycleItem;
 import com.github.apilab.core.Env;
 import io.prometheus.client.exporter.HTTPServer;
+import io.prometheus.client.hotspot.DefaultExports;
 import java.io.IOException;
 import static java.util.Optional.ofNullable;
 import javax.inject.Inject;
@@ -33,7 +34,7 @@ public class PrometheusLifecycle implements ApplicationLifecycleItem {
 
   @Inject
   public PrometheusLifecycle() {
-    ///
+    DefaultExports.initialize();
   }
 
   /**
