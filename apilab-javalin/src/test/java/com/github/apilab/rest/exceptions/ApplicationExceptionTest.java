@@ -20,38 +20,38 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.jupiter.api.Test;
 
 /**
- * 
+ *
  * @author Raffaele Ragni
  */
-public class ApplicationExceptionTest {
-  
+class ApplicationExceptionTest {
+
   @Test
-  public void testExceptions() {
+  void testExceptions() {
     var t = new RuntimeException();
     var ex = new ServerException("message", t);
-    
+
     assertThat("message taken", ex.getMessage(), is("message"));
     assertThat("cause taken", ex.getCause(), is(t));
-    
+
     ex = new NotFoundException("not found message");
-    
+
     assertThat("status taken", ex.getHttpCode(), is(404));
     assertThat("message taken", ex.getMessage(), is("not found message"));
-    
+
     ex = new NotAuthenticatedException("not authenticated");
-    
+
     assertThat("status taken", ex.getHttpCode(), is(401));
     assertThat("message taken", ex.getMessage(), is("not authenticated"));
-    
+
     ex = new NotAuthorizedException("not authorized");
-    
+
     assertThat("status taken", ex.getHttpCode(), is(403));
     assertThat("message taken", ex.getMessage(), is("not authorized"));
-    
+
     ex = new UnprocessableEntityException("unprocessable");
-    
+
     assertThat("status taken", ex.getHttpCode(), is(422));
     assertThat("message taken", ex.getMessage(), is("unprocessable"));
   }
-  
+
 }

@@ -26,10 +26,10 @@ import org.junit.jupiter.api.Test;
  *
  * @author Raffaele Ragni
  */
-public class JdbiModuleTest {
+class JdbiModuleTest {
 
   @Test
-  public void testModule() {
+  void testModule() {
     var env = new Env();
     System.setProperty("API_DATABASE_URL", "jdbc:h2:mem:test");
     System.setProperty("API_DATABASE_USERNAME", "sa");

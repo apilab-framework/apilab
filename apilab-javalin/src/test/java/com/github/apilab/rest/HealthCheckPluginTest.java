@@ -30,10 +30,10 @@ import static org.mockito.Mockito.verify;
  *
  * @author Raffaele Ragni
  */
-public class HealthCheckPluginTest {
+class HealthCheckPluginTest {
 
   @Test
-  public void testHealthCheck() throws Exception {
+  void testHealthCheck() throws Exception {
     var ctx = mock(Context.class);
     var app = mock(Javalin.class);
     var env = new Env();

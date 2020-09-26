@@ -24,9 +24,10 @@ import org.junit.jupiter.api.Test;
  *
  * @author Raffaele Ragni
  */
-public class EnvTest {
+class EnvTest {
+
   @Test
-  public void testEnv() {
+  void testEnv() {
     System.setProperty("JAVALIN_HTTP2_PORT", "9090");
     var env = new Env();
     assertThat("Env read from properties", env.get(() -> "JAVALIN_HTTP2_PORT"), is("9090"));

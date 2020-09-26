@@ -24,9 +24,9 @@ import org.junit.jupiter.api.Test;
  *
  * @author Raffaele Ragni
  */
-public class ExecutorsModuleTest {
+class ExecutorsModuleTest {
   @Test
-  public void testInjectedLifecycle() {
+  void testInjectedLifecycle() {
     var services = DaggerApplicationComponent.create().services();
 
     assertThat("Service is loaded", services, hasItem(isA(ApplicationExecutorLifecycle.class)));

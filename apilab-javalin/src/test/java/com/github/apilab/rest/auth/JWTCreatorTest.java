@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Raffaele Ragni
  */
-public class JWTCreatorTest {
+class JWTCreatorTest {
 
   private static final AuthConfiguration BASE_CONFIG = ImmutableAuthConfiguration.builder()
       .roleMapper(Roles::valueOf)
@@ -41,21 +41,21 @@ public class JWTCreatorTest {
       .build();
 
   @Test
-  public void testWrongConfig() {
+  void testWrongConfig() {
     assertThrows(IllegalArgumentException.class, () -> {
       new JavalinJWTCreator(BASE_CONFIG);
     });
   }
 
   @Test
-  public void testSimpleToken() {
+  void testSimpleToken() {
     var creator = new JavalinJWTCreator(EXTENDED_CONFIG);
     var token = creator.create(Set.of(ADMIN));
     assertThat("token is correct", token, is("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJSb2xlcyI6WyJBRE1JTiJdfQ.TYDeoIGD7wjJj63XWhBTto0PdYBRu5NJrFS4geDv9zA"));
   }
 
   @Test
-  public void testSimpleTokenAdditionalClaims() {
+  void testSimpleTokenAdditionalClaims() {
     var creator = new JavalinJWTCreator(EXTENDED_CONFIG);
     var token = creator.create(Set.of(ADMIN), () -> Map.of("test", "value", "test2", "value2"));
     assertThat("token is correct", token, is("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0ZXN0MiI6InZhbHVlMiIsInRlc3QiOiJ2YWx1ZSIsIlJvbGVzIjpbIkFETUlOIl19.R6asOqiW-4eJSXmlgg9BFWKpcP08bOrpNEyNPT1Z7jo"));

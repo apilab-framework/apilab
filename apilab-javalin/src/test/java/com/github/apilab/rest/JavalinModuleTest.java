@@ -38,17 +38,17 @@ import org.junit.jupiter.api.Test;
  *
  * @author Raffaele Ragni
  */
-public class JavalinModuleTest {
+class JavalinModuleTest {
 
   @Test
-  public void testInjectedLifecycle() {
+  void testInjectedLifecycle() {
     var services = DaggerApplicationComponent.create().services();
 
     assertThat("Service is loaded", services, hasItem(isA(JavalinLifecycle.class)));
   }
 
   @Test
-  public void testJavalin() throws IOException {
+  void testJavalin() throws IOException {
     var config = new JavalinModule();
     var env = new Env();
     System.setProperty("API_ENABLE_ENDPOINTS", "false");
@@ -94,7 +94,7 @@ public class JavalinModuleTest {
   }
 
   @Test
-  public void testInitializerDefaultValue() {
+  void testInitializerDefaultValue() {
     var initializer = ImmutableAuthConfiguration.builder().build();
     var fn = initializer.roleMapper();
     assertThat("Mapping string straight away", fn.apply("test").toString(), is("test"));

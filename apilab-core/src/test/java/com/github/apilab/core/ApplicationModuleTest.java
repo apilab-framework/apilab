@@ -29,9 +29,10 @@ import org.skyscreamer.jsonassert.JSONAssert;
  *
  * @author Raffaele Ragni
  */
-public class ApplicationModuleTest {
+class ApplicationModuleTest {
+
   @Test
-  public void testModule() throws IOException, JSONException {
+  void testModule() throws IOException, JSONException {
     var gson = new GSONModule().gson();
 
     // Basic serialization sanity check

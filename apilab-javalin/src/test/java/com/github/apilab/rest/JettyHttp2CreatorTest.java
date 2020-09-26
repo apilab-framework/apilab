@@ -27,10 +27,10 @@ import org.junit.jupiter.api.Test;
  *
  * @author Raffaele Ragni
  */
-public class JettyHttp2CreatorTest {
+class JettyHttp2CreatorTest {
 
   @Test
-  public void testServer() throws IOException {
+  void testServer() throws IOException {
     var server = JettyHttp2Creator.createHttp2Server(new Env());
     assertThat("Server built", server, is(not(nullValue())));
   }

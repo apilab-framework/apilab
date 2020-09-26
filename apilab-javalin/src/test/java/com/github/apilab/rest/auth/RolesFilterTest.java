@@ -17,6 +17,7 @@ package com.github.apilab.rest.auth;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import static com.github.apilab.rest.auth.JavalinJWTFilter.REQ_ATTR_JWT;
 import static com.github.apilab.rest.auth.JavalinJWTFilter.REQ_ATTR_ROLES;
 import static com.github.apilab.rest.auth.JavalinJWTFilter.REQ_ATTR_SUBJECT;
 import static com.github.apilab.rest.auth.Roles.USER;
@@ -26,8 +27,11 @@ import java.util.Optional;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -37,7 +41,7 @@ import static org.mockito.Mockito.when;
  *
  * @author Raffaele Ragni
  */
-public class RolesFilterTest {
+class RolesFilterTest {
 
   private static final AuthConfiguration BASE_CONFIG = ImmutableAuthConfiguration.builder()
       .roleMapper(Roles::valueOf)
@@ -49,7 +53,7 @@ public class RolesFilterTest {
       .build();
 
   @Test
-  public void testRegister() {
+  void testRegister() {
     var filter = new JavalinJWTFilter(BASE_CONFIG);
     var javalin = mock(Javalin.class);
 
@@ -59,7 +63,7 @@ public class RolesFilterTest {
   }
 
   @Test
-  public void testErrorCases() throws Exception {
+  void testErrorCases() throws Exception {
     var filter = new JavalinJWTFilter(BASE_CONFIG);
 
     var request = mock(HttpServletRequest.class);
@@ -94,13 +98,14 @@ public class RolesFilterTest {
   }
 
   @Test
-  public void testOKWithoutSecretValidation() throws Exception {
+  void testOKWithoutSecretValidation() throws Exception {
     var filter = new JavalinJWTFilter(BASE_CONFIG);
     var alg = Algorithm.HMAC256("secret");
     var token = JWT.create()
       .withSubject("subjectXX")
       .withArrayClaim("roles", new String[]{"user"})
       .sign(alg);
+    var decoded = JWT.decode(token);
 
     var request = mock(HttpServletRequest.class);
     var response = mock(HttpServletResponse.class);
@@ -113,10 +118,18 @@ public class RolesFilterTest {
 
     verify(request).setAttribute(REQ_ATTR_SUBJECT, "subjectXX");
     verify(request).setAttribute(REQ_ATTR_ROLES, Set.of(USER));
+    verify(request).setAttribute(eq(REQ_ATTR_JWT), any());
+
+    when(request.getAttribute(REQ_ATTR_JWT))
+      .thenReturn(decoded);
+
+    var gotToken = JavalinJWTFilter.getToken(ctx);
+
+    assertThat(gotToken, is(decoded));
   }
 
   @Test
-  public void testOKWithSecretValidation() throws Exception {
+  void testOKWithSecretValidation() throws Exception {
     var alg = Algorithm.HMAC256("secret");
     var filter = new JavalinJWTFilter(EXTENDED_CONFIG);
     var token = JWT.create()

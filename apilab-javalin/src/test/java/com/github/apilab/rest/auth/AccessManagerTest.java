@@ -34,10 +34,10 @@ import static org.mockito.Mockito.when;
  *
  * @author Raffaele Ragni
  */
-public class AccessManagerTest {
+class AccessManagerTest {
 
   @Test
-  public void testNoRoleRequired() throws Exception {
+  void testNoRoleRequired() throws Exception {
     var manager = new JavalinJWTAccessManager();
     var handler = mock(Handler.class);
     var request = mock(HttpServletRequest.class);
@@ -50,7 +50,7 @@ public class AccessManagerTest {
   }
 
   @Test
-  public void testAccessManager() throws Exception {
+  void testAccessManager() throws Exception {
     var manager = new JavalinJWTAccessManager();
     var handler = mock(Handler.class);
     var request = mock(HttpServletRequest.class);
@@ -66,7 +66,7 @@ public class AccessManagerTest {
   }
 
   @Test
-  public void testNotAccess() throws Exception {
+  void testNotAccess() throws Exception {
     var manager = new JavalinJWTAccessManager();
     var handler = mock(Handler.class);
     var request = mock(HttpServletRequest.class);

@@ -32,17 +32,17 @@ import static org.mockito.Mockito.when;
  *
  * @author Raffaele Ragni
  */
-public class RabbitMQModuleTest {
+class RabbitMQModuleTest {
 
   @Test
-  public void testInjectedLifecycle() {
+  void testInjectedLifecycle() {
     var services = DaggerApplicationComponent.create().services();
 
     assertThat("Service is loaded", services, hasItem(isA(QueueLifecycle.class)));
   }
 
   @Test
-  public void testModule() throws IOException, TimeoutException {
+  void testModule() throws IOException, TimeoutException {
     var env = new Env();
     var module = new QueueModule();
 

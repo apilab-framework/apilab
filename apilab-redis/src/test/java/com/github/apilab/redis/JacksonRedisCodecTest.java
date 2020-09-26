@@ -26,10 +26,10 @@ import org.junit.jupiter.api.Test;
  *
  * @author Raffaele Ragni
  */
-public class JacksonRedisCodecTest {
+class JacksonRedisCodecTest {
 
   @Test
-  public void testKey() {
+  void testKey() {
     var gson = new Gson();
     var codec = new GsonRedisCodec<String>(String.class, gson);
 
@@ -39,7 +39,7 @@ public class JacksonRedisCodecTest {
   }
 
   @Test
-  public void testValue() {
+  void testValue() {
     var gson = new GsonBuilder().enableComplexMapKeySerialization().create();
     var codec = new GsonRedisCodec<Map>(Map.class, gson);
 

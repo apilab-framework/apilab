@@ -24,9 +24,9 @@ import org.junit.jupiter.api.Test;
  *
  * @author Raffaele Ragni
  */
-public class RedisModuleTest {
+class RedisModuleTest {
   @Test
-  public void testModule() {
+  void testModule() {
     var module = new RedisModule();
     var connection = module.redisClient(new Env());
     var result = module.dbHealthCheck(connection).get();

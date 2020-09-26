@@ -26,9 +26,9 @@ import org.junit.jupiter.api.Test;
  *
  * @author Raffaele Ragni
  */
-public class ApplicationSchedulerTest {
+class ApplicationSchedulerTest {
   @Test
-  public void testScheduler() throws InterruptedException {
+  void testScheduler() throws InterruptedException {
     var scheduler = new ApplicationScheduler();
 
     scheduler.scheduled = Set.of(new MyScheduled(), new MyScheduledExceptional());

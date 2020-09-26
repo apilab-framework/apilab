@@ -26,10 +26,10 @@ import org.junit.jupiter.api.Test;
  *
  * @author Raffaele Ragni
  */
-public class PrometheusTest {
+class PrometheusTest {
 
   @Test
-  public void testMetrics() {
+  void testMetrics() {
 
     var lifecycle = new PrometheusLifecycle();
     lifecycle.env = new Env();

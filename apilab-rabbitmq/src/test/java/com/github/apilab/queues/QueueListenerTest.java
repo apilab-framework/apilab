@@ -38,10 +38,10 @@ import static org.mockito.Mockito.when;
  *
  * @author Raffaele Ragni
  */
-public class QueueListenerTest {
+class QueueListenerTest {
 
   @Test
-  public void testQueueing() throws IOException, TimeoutException {
+  void testQueueing() throws IOException, TimeoutException {
 
     var gson = new Gson();
     var rabbitFactory = mock(ConnectionFactory.class);

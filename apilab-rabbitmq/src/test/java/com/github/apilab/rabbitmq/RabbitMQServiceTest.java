@@ -18,6 +18,7 @@ package com.github.apilab.rabbitmq;
 import com.github.apilab.core.Env;
 import com.github.apilab.queues.QueueService;
 import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -27,13 +28,13 @@ import static org.mockito.Mockito.verify;
  *
  * @author Raffaele Ragni
  */
-public class RabbitMQServiceTest {
+class RabbitMQServiceTest {
 
   QueueLifecycle service;
   QueueService<String> queueService;
 
-  // BeforeEach just doesn't work, have no time to deal with people's libraries while maintaining my own.
-  public void startup() {
+  @BeforeEach
+  void startup() {
     queueService = mock(QueueService.class);
     service = new QueueLifecycle();
     service.queueServices = Set.of(queueService);
@@ -41,8 +42,7 @@ public class RabbitMQServiceTest {
   }
 
   @Test
-  public void testDoesNotStartIfDisabled() {
-    startup();
+  void testDoesNotStartIfDisabled() {
     System.setProperty("API_ENABLE_CONSUMERS", "false");
 
     service.start();
@@ -53,8 +53,7 @@ public class RabbitMQServiceTest {
   }
 
   @Test
-  public void testDoesStartIfEnabled() {
-    startup();
+  void testDoesStartIfEnabled() {
     System.setProperty("API_ENABLE_CONSUMERS", "true");
 
     service.start();

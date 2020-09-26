@@ -23,10 +23,10 @@ import org.junit.jupiter.api.Test;
  *
  * @author Raffaele Ragni
  */
-public class ApplicationExceptionTest {
+class ApplicationExceptionTest {
 
   @Test
-  public void testExceptions() {
+  void testExceptions() {
     var t = new RuntimeException();
     var ex = new MigrationException("message", t);
 

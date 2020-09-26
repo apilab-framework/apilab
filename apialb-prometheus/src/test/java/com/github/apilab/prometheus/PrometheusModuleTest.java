@@ -24,9 +24,9 @@ import org.junit.jupiter.api.Test;
  *
  * @author Raffaele Ragni
  */
-public class PrometheusModuleTest {
+class PrometheusModuleTest {
   @Test
-  public void testReturn() {
+  void testReturn() {
     var services = DaggerApplicationComponent.create().services();
 
     assertThat("Service is loaded", services, hasItem(isA(PrometheusLifecycle.class)));

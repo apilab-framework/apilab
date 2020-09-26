@@ -17,6 +17,7 @@ package com.github.apilab.rest;
 
 import com.github.apilab.core.Env;
 import io.javalin.Javalin;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -26,20 +27,19 @@ import static org.mockito.Mockito.verify;
  *
  * @author Raffaele Ragni
  */
-public class JavalinLifecycleTest {
+class JavalinLifecycleTest {
 
   JavalinLifecycle service;
 
-  // BeforeEach just doesn't work, have no time to deal with people's libraries while maintaining my own.
-  public void startup() {
+  @BeforeEach
+  void startup() {
     service = new JavalinLifecycle();
     service.javalin = mock(Javalin.class);
     service.env = new Env();
   }
 
   @Test
-  public void testDoesNotStartIfDisabled() {
-    startup();
+  void testDoesNotStartIfDisabled() {
     System.setProperty("API_ENABLE_ENDPOINTS", "false");
 
     service.start();
@@ -50,8 +50,7 @@ public class JavalinLifecycleTest {
   }
 
   @Test
-  public void testDoesStartIfEnabled() {
-    startup();
+  void testDoesStartIfEnabled() {
     System.setProperty("API_ENABLE_ENDPOINTS", "true");
 
     service.start();
