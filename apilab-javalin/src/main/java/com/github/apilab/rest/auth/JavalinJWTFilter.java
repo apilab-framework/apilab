@@ -17,6 +17,7 @@ package com.github.apilab.rest.auth;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import io.javalin.Javalin;
 import io.javalin.core.plugin.Plugin;
 import io.javalin.core.security.Role;
@@ -40,6 +41,7 @@ import static java.util.stream.Collectors.toSet;
  */
 public class JavalinJWTFilter implements Plugin, Handler {
 
+  public static final String REQ_ATTR_JWT = "JWT";
   public static final String REQ_ATTR_SUBJECT = "JWT.SUBJECT";
   public static final String REQ_ATTR_ROLES = "JWT.ROLES";
 
@@ -107,6 +109,11 @@ public class JavalinJWTFilter implements Plugin, Handler {
 
     ctx.attribute(REQ_ATTR_ROLES, typedRoles);
 
+    ctx.attribute(REQ_ATTR_JWT, decoded);
+  }
+
+  public static DecodedJWT getToken(Context ctx) {
+    return ctx.attribute(REQ_ATTR_JWT);
   }
 
 }
