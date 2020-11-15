@@ -6,3 +6,5 @@
 /apilab-executors/target/
 /apilab-redis/target/
 /apialb-prometheus/target/
+/apilab-javalin - Copy/target/
+/apilab-grpc/target/

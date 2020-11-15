@@ -9,6 +9,7 @@
   <artifactId>apilab-javalin</artifactId>
   <packaging>jar</packaging>
   <properties>
+    <main.basedir>${project.parent.basedir}</main.basedir>
     <version.swagger-core>2.1.1</version.swagger-core>
     <version.swagger-ui>3.24.3</version.swagger-ui>
     <!-- -->
