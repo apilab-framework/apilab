@@ -22,6 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import org.mockito.verification.VerificationMode;
 
 /**
  *
@@ -45,6 +48,54 @@ class ApplicationGRPCTest {
     lifecycles.start();
 
     lifecycles.stop();
+  }
+
+  @Test
+  void testStart() throws IOException {
+    System.setProperty("API_ENABLE_GRPC", "true");
+    var lifecycle = new GRPCLifecycleItem();
+    lifecycle.env = new Env();
+    lifecycle.server = mock(Server.class);
+    
+    lifecycle.start();
+
+    verify(lifecycle.server).start();
+  }
+
+  @Test
+  void testStop() throws IOException {
+    System.setProperty("API_ENABLE_GRPC", "true");
+    var lifecycle = new GRPCLifecycleItem();
+    lifecycle.env = new Env();
+    lifecycle.server = mock(Server.class);
+    
+    lifecycle.stop();
+
+    verify(lifecycle.server).shutdown();
+  }
+
+  @Test
+  void testDontStart() throws IOException {
+    System.setProperty("API_ENABLE_GRPC", "false");
+    var lifecycle = new GRPCLifecycleItem();
+    lifecycle.env = new Env();
+    lifecycle.server = mock(Server.class);
+    
+    lifecycle.start();
+
+    verify(lifecycle.server, never()).start();
+  }
+
+  @Test
+  void testDontStop() throws IOException {
+    System.setProperty("API_ENABLE_GRPC", "false");
+    var lifecycle = new GRPCLifecycleItem();
+    lifecycle.env = new Env();
+    lifecycle.server = mock(Server.class);
+    
+    lifecycle.stop();
+
+    verify(lifecycle.server, never()).shutdown();
   }
 
   @Test
