@@ -8,3 +8,7 @@
 /apialb-prometheus/target/
 /apilab-javalin - Copy/target/
 /apilab-grpc/target/
+/apilab-http/target/
+/apilab-barehttp/target/
+/apilab-prometheus/target/
+/apilab-bareexecutors/target/

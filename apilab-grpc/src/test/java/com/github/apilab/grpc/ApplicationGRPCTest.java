@@ -24,7 +24,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import org.mockito.verification.VerificationMode;
 
 /**
  *
@@ -33,6 +32,7 @@ import org.mockito.verification.VerificationMode;
 class ApplicationGRPCTest {
   @Test
   void testGRPCDisabled() {
+    System.setProperty("API_ENABLE_GRPC", "false");
     var lifecycles = DaggerApplicationComponent.create().instance();
 
     lifecycles.start();
@@ -45,6 +45,7 @@ class ApplicationGRPCTest {
     System.setProperty("API_ENABLE_GRPC", "true");
     var lifecycles = DaggerApplicationComponent.create().instance();
 
+
     lifecycles.start();
 
     lifecycles.stop();
@@ -56,7 +57,7 @@ class ApplicationGRPCTest {
     var lifecycle = new GRPCLifecycleItem();
     lifecycle.env = new Env();
     lifecycle.server = mock(Server.class);
-    
+
     lifecycle.start();
 
     verify(lifecycle.server).start();
@@ -68,7 +69,7 @@ class ApplicationGRPCTest {
     var lifecycle = new GRPCLifecycleItem();
     lifecycle.env = new Env();
     lifecycle.server = mock(Server.class);
-    
+
     lifecycle.stop();
 
     verify(lifecycle.server).shutdown();
@@ -80,7 +81,7 @@ class ApplicationGRPCTest {
     var lifecycle = new GRPCLifecycleItem();
     lifecycle.env = new Env();
     lifecycle.server = mock(Server.class);
-    
+
     lifecycle.start();
 
     verify(lifecycle.server, never()).start();
@@ -92,7 +93,7 @@ class ApplicationGRPCTest {
     var lifecycle = new GRPCLifecycleItem();
     lifecycle.env = new Env();
     lifecycle.server = mock(Server.class);
-    
+
     lifecycle.stop();
 
     verify(lifecycle.server, never()).shutdown();

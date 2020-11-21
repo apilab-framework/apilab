@@ -47,7 +47,7 @@ public class GRPCModule {
     var builder = NettyServerBuilder.forPort(getPort(env));
 
     for (BindableService service: services) {
-      LOG.info("## ADDING GRPC SERVICE: " + service.getClass().getName());
+      LOG.info("## ADDING GRPC SERVICE: {}", service.getClass().getName());
       builder.addService(ServerInterceptors.intercept(service, INTERCEPTOR));
     }
 

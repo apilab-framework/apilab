@@ -6,10 +6,17 @@
     <artifactId>apilab</artifactId>
     <version>2.0-SNAPSHOT</version>
   </parent>
-  <artifactId>apilab-core</artifactId>
+  <artifactId>apilab-bareexecutors</artifactId>
   <packaging>jar</packaging>
   <properties>
     <main.basedir>${project.parent.basedir}</main.basedir>
   </properties>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>apilab-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
   <!-- Intentional no dependencies, this is a bare module -->
 </project>
