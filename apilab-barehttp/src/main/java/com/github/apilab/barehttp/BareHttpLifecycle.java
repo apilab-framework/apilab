@@ -17,16 +17,24 @@ package com.github.apilab.barehttp;
 
 import com.github.apilab.core.ApplicationLifecycleItem;
 import com.github.apilab.core.Env;
+import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Map;
 import java.util.Optional;
 import static java.util.Optional.ofNullable;
+import java.util.concurrent.Executors;
 import javax.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BareHttpLifecycle implements ApplicationLifecycleItem {
 
+  private static final Logger LOG = LoggerFactory.getLogger(ApplicationLifecycleItem.class);
+  
   @Inject Env env;
+  @Inject Map<String, HttpHandler> handlers;
   HttpServer server;
 
   @Inject
@@ -37,9 +45,16 @@ public class BareHttpLifecycle implements ApplicationLifecycleItem {
   @Override
   public void start() {
     if (enabled(env) && server == null) {
+      var port = getPort(env);
+      var backlog = getBacklog(env);
+      LOG.info("## STARTING BARE HTTP SERVER FROM SUN, port: {}, backlog/threads: {}", port, backlog);
       try {
-        server = HttpServer.create(new InetSocketAddress(getPort(env)), getBacklog(env));
-        server.setExecutor(null);
+        server = HttpServer.create(new InetSocketAddress(port), backlog);
+        handlers.entrySet().forEach(e -> {
+          LOG.info("## REGISTERING BARE HTTP SERVER HANDLER: '{}'", e.getKey());
+          server.createContext(e.getKey(), e.getValue());
+        });
+        server.setExecutor(Executors.newFixedThreadPool(backlog));
         server.start(); } catch (IOException ex) { throw new IllegalStateException(ex.getMessage(), ex); }
     }
   }

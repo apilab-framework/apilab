@@ -16,12 +16,26 @@
 package com.github.apilab.barehttp;
 
 import com.github.apilab.core.Env;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import dagger.Provides;
+import dagger.multibindings.IntoMap;
+import dagger.multibindings.StringKey;
+import java.io.IOException;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import javax.inject.Singleton;
 
 @dagger.Module
 public class ComponentsModule {
 
+  @Provides @IntoMap @StringKey("/") HttpHandler rootHandler() {
+    return ctx -> {
+      try (var out = ctx.getResponseBody()) {
+        out.write("Default response".getBytes(UTF_8));
+      }
+    };
+  }
+  
   @Provides
   @Singleton
   public Env env() {
